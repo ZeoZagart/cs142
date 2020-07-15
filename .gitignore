@@ -9,3 +9,5 @@ package-lock.json
 !cs142-test-project2.js
 !run-tests-using-node.js
 !bundle.js
+_config.yml
+README.md
