@@ -1,0 +1,38 @@
+html {
+	background-color:  cadetblue;
+}
+
+ol {
+	list-style: none;
+	display: flex;
+	flex-direction: column;
+	margin: auto;
+	width: 80px;
+	align-self: stretch;
+}
+
+li {	
+	font-size: 25px;
+	color: beige;
+	background: burlywood;
+	height: 55px;
+	border: 2px;
+	border-top-style: solid;
+	border-left-style: dotted;
+	margin-top: 15px;
+	text-align:  center;
+}
+
+li:hover {
+	background-color: wheat;
+	color: blanchedalmond;
+}
+
+li:last-of-type{
+	color: black;
+	background-color: antiquewhite;
+	padding-top: 3px;
+	height: 100%;
+	display: inline-block;
+	text-align: center;
+}

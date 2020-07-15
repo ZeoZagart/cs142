@@ -1,0 +1,25 @@
+ol {
+  background-color: azure;
+  list-style-type: none;
+  display: flex;
+  margin: auto;
+  height: 40%;
+  min-height: 400px;
+}
+
+li {
+  border-left: black dotted;
+  background-color: antiquewhite;
+  margin-inline:  auto;
+  height: 60px;
+  width: 60px;
+}
+
+li:nth-child(2n) {
+  background-color:   brown;
+}
+
+li:last-of-type {   
+  background-color: antiquewhite;
+  align-self: end;
+}

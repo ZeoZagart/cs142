@@ -1,0 +1,23 @@
+{
+  "name": "project3",
+  "version": "1.0.0",
+  "description": "cs142 project3 - JavaScript and the DOM",
+  "dependencies": {
+    "jshint": "^2.9.1-rc2"
+  },
+  "devDependencies": {
+    "ts-loader": "^8.0.0",
+    "typescript": "^3.9.6",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.12",
+    "webpack-dev-server": "^3.11.0"
+  },
+  "scripts": {
+    "serve": "webpack-dev-server",
+    "build": "webpack",
+    "test": "echo Test your code by opening datapicker.html and cs142-test-table.html in your browser.",
+    "jshint": "./node_modules/.bin/jshint --config .jshintrc --exclude=node_modules . || exit 0"
+  },
+  "author": "Mendel Rosenblum <mendel@cs.stanford.edu> (http://www.stanford.edu/~mendel)",
+  "license": "ISC"
+}

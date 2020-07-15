@@ -1,0 +1,11 @@
+**/node_modules
+*.js
+!webpack.config.js
+*.zip
+**/SampleServer
+*.md
+*.DS_Store
+package-lock.json
+!cs142-test-project2.js
+!run-tests-using-node.js
+!bundle.js
