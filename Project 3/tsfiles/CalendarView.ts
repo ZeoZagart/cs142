@@ -1,10 +1,11 @@
 import { getRange, excludeStart } from "./Utils"
 
 export class CalendarView {
-    static getCalendarTable(date: Date): HTMLTableElement {
+    static getCalendarTable(id: string, month: number, year: number): HTMLTableElement {
         let calendarTable = document.createElement("table")
+        calendarTable.id = id
         this.addCalendarHeader(calendarTable)
-        this.addCalendarWeeks(calendarTable, date)
+        this.addCalendarWeeks(calendarTable, new Date(year, month, 1))
         return calendarTable
     }
 

@@ -22,6 +22,10 @@ export class DropDownUtils {
         return monthSelector
     } 
 
+    static getMonthIndex(value: string): number {
+        return this.MONTHS.indexOf(value)
+    }
+
    private static getDropDown(elements: Array<DropdownOptionType>): Array<HTMLOptionElement> {
         let optionElements = new Array<HTMLOptionElement>(elements.length)
         elements.forEach(optionName=>{
