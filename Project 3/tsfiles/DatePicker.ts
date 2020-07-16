@@ -5,6 +5,7 @@ class DatePicker {
     private readonly MONTH_DROP_DOWN_ID = "month-drop-down"
     private readonly YEAR_DROP_DOWN_ID = "year-drop-down"
     private readonly CALENDAR_TABLE_ID = "calendar-table"
+    private calendarDiv!: HTMLElement;
 
     private readonly id: string
     private readonly onclick: () => void
@@ -20,7 +21,7 @@ class DatePicker {
     render(month: number, year: number) {
         this.selectedMonth = Math.floor(month)
         this.selectedYear = Math.floor(year)
-        let calendarDiv: HTMLElement = document.getElementById(this.id)!
+        this.calendarDiv = document.getElementById(this.id)!
         let monthDropDown: HTMLSelectElement = DropDownUtils.getMonthsDropDown(this.MONTH_DROP_DOWN_ID)
         let yearDropDown: HTMLSelectElement = DropDownUtils.getYearsDropDown(this.YEAR_DROP_DOWN_ID, year)
         let calendarTable: HTMLTableElement = CalendarView.getCalendarTable(this.CALENDAR_TABLE_ID, month, year)
@@ -34,14 +35,16 @@ class DatePicker {
             let newYear: string = yearDropDown.value
             this.reRenderTable(this.selectedMonth, Number.parseInt(newYear))
         })
-        calendarDiv.appendChild(monthDropDown)
-        calendarDiv.appendChild(yearDropDown)
-        calendarDiv.appendChild(calendarTable)
+        this.calendarDiv.appendChild(monthDropDown)
+        this.calendarDiv.appendChild(yearDropDown)
+        this.calendarDiv.appendChild(calendarTable)
     }
 
     private reRenderTable(month: number, year: number) {
-        let oldCalendarTable = document.getElementById(this.CALENDAR_TABLE_ID)
-        let newCalendarTable: HTMLTableElement = CalendarView.getCalendarTable(this.CALENDAR_TABLE_ID, month, year) 
+        let oldCalendarTable = this.calendarDiv.querySelector(`#${this.CALENDAR_TABLE_ID}`)
+        let newCalendarTable: HTMLTableElement = CalendarView.getCalendarTable(this.CALENDAR_TABLE_ID, month, year)
+        this.selectedMonth = month
+        this.selectedYear = year
         oldCalendarTable?.replaceWith(newCalendarTable)
     }
 }
