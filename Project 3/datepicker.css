@@ -1,0 +1,63 @@
+body {
+  background: salmon;
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+}
+
+#datepicker1 {
+  background: #232327;
+  padding: 30px;
+  margin: auto;
+}
+
+table {
+  background: white;
+  padding: 40px;
+}
+
+body > h1:nth-child(1) {
+ margin: auto;
+ padding: 10px;
+ font-size: 31px;
+ font-family: sans-serif;
+ font-variant-caps: all-small-caps;
+ line-height: 0.9;
+ letter-spacing: 0.015em;
+ font-weight: 300;
+ font-style: normal;
+}
+
+select {
+  -webkit-appearance: none;
+  background-color: palevioletred;
+  position: relative;
+  margin: auto;
+  font-family: sans-serif;
+  font-size: 15px;
+  padding: 4px;
+  align-content: center;
+  border-width: 0px;
+  width: 120px;
+  margin-left: 10px;
+  border-right-width: 15px;
+  border-right-color: #a47171;
+  letter-spacing: 0.132em;
+  font-weight: 500;
+}
+
+option {
+  -webkit-appearance: none;
+   background-color: #a47171;
+}
+
+td {
+  padding: 10px;
+  border-right: 1px solid black;
+}
+
+td:last-of-type {
+  border-right: 0px solid black;
+}
+
+
