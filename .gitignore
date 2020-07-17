@@ -11,3 +11,4 @@ package-lock.json
 !bundle.js
 _config.yml
 README.md
+*.map
