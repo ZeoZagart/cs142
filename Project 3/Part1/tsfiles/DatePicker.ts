@@ -24,7 +24,7 @@ class DatePicker {
         this.calendarDiv = document.getElementById(this.id)!
         let monthDropDown: HTMLSelectElement = DropDownUtils.getMonthsDropDown(this.MONTH_DROP_DOWN_ID)
         let yearDropDown: HTMLSelectElement = DropDownUtils.getYearsDropDown(this.YEAR_DROP_DOWN_ID, year)
-        let calendarTable: HTMLTableElement = CalendarView.getCalendarTable(this.CALENDAR_TABLE_ID, month, year)
+        let calendarTable: HTMLTableElement = CalendarView.getCalendarTable(this.CALENDAR_TABLE_ID, month, year, this.onclick)
         monthDropDown.selectedIndex = this.selectedMonth
         yearDropDown.selectedIndex = yearDropDown.options.length - 1
         monthDropDown.addEventListener("change",(event) => {
@@ -42,15 +42,16 @@ class DatePicker {
 
     private reRenderTable(month: number, year: number) {
         let oldCalendarTable = this.calendarDiv.querySelector(`#${this.CALENDAR_TABLE_ID}`)
-        let newCalendarTable: HTMLTableElement = CalendarView.getCalendarTable(this.CALENDAR_TABLE_ID, month, year)
+        let newCalendarTable: HTMLTableElement = CalendarView.getCalendarTable(this.CALENDAR_TABLE_ID, month, year, this.onclick)
         this.selectedMonth = month
         this.selectedYear = year
         oldCalendarTable?.replaceWith(newCalendarTable)
     }
 }
 
-let dp1 = new DatePicker("datepicker1", () => {})
+let doOnClick = () => { console.log("pokemon click")}
+let dp1 = new DatePicker("datepicker1", doOnClick)
 dp1.render(new Date().getMonth(), new Date().getFullYear())
 
-let dp2 = new DatePicker("datepicker2", () => {})
+let dp2 = new DatePicker("datepicker2", doOnClick)
 dp2.render(8, 2020)
