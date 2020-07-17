@@ -1,0 +1,14 @@
+{
+   "compileOnSave": true,
+   "compilerOptions": {
+      "moduleResolution":"node",
+      "module": "esnext",
+      "target": "es6",
+      "alwaysStrict":true,
+      "noImplicitAny": true,
+      "noImplicitThis": true,
+      "strictNullChecks": true,
+      "strict":true,
+   },
+   "exclude": []
+}
