@@ -1,5 +1,6 @@
 import React from 'react';
 import './Example.css';
+import Headers from '../headers/Headers'
 
 /*
   Since this component shows code we include the https://prismjs.com/
@@ -106,6 +107,7 @@ class Example extends React.Component {
   render() {
     return (
       <div className="container Example">
+        <Headers personName={this.state.name} motto = {this.state.motto}/>
         <h1>CS142 Project#4 React.js Example</h1>
         <h1>{this.state.motto}</h1>
         <input className="motto-update"/>

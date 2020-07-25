@@ -17,7 +17,7 @@ class Input extends Component {
 
     render() {
         return (
-            <input className="textInput" onChange={this.onTextChange}/>
+            <input onChange={this.onTextChange}/>
         )
     }
 }

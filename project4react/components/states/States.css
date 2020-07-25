@@ -4,9 +4,28 @@ CSS for the CS142 project #4 Problem #2 states component
 Since CSS uses a global name space for classes we should use names starting with
 cs142-states- here.
 */
-
-
-.textInput {
-    background-color: burlywood;
-    font-family: Arial, Helvetica, sans-serif;
+body {
+    display: block;
+    margin: 0;
 }
+
+.stateDiv {
+    display: grid;
+    align-items: center;
+    text-align: center;
+}
+
+.stateDiv > * {
+    margin: auto;
+}
+
+li {
+    color: white;
+    list-style: none;
+    padding: 15px;
+    border: 2px solid skyblue;
+    border-radius: 5px;
+    background-color: royalblue;
+    font-size: large;
+    font-family: Arial, Helvetica, sans-serif;
+} 

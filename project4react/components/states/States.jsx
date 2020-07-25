@@ -1,6 +1,7 @@
 import React, { Fragment } from 'react';
 import './States.css';
 import Input from './Input'
+import Headers from '../headers/Headers'
 
 /**
  * Define States, a React componment of CS142 project #4 problem #2.  The model
@@ -34,7 +35,8 @@ class States extends React.Component {
 
   render() {
     return (
-      <div>
+      <div className="stateDiv">
+        <Headers personName={window.cs142models.exampleModel.name} motto={window.cs142models.exampleModel.motto}/>
         <Input doOnTextChange={this.recalculatePossibleStates}/>
         {this.renderList(this.state.possibleStates)}
       </div>
