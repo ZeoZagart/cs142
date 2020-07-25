@@ -19,6 +19,12 @@ body {
     margin: auto;
 }
 
+ul {
+    display: grid;
+    grid-gap: 1rem;
+    grid-template-columns: repeat(2, auto 1fr auto);
+}
+
 li {
     color: white;
     list-style: none;

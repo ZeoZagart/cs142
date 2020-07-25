@@ -110,8 +110,6 @@ class Example extends React.Component {
         <Headers personName={this.state.name} motto = {this.state.motto}/>
         <h1>CS142 Project#4 React.js Example</h1>
         <h1>{this.state.motto}</h1>
-        <input className="motto-update"/>
-        <button onSubmit={this.handleMottoUpdate}>Submit Motto</button>
         <p>
           This view is an example of a
           &nbsp;
