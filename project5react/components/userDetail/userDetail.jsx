@@ -1,15 +1,9 @@
 import React from "react";
 import {
-  Paper,
   Grid,
   Typography,
   Avatar,
-  makeStyles,
-  Container,
-  Card,
-  Button,
 } from "@material-ui/core";
-import "./userDetail.css";
 
 class UserDetail extends React.Component {
   constructor(props) {
@@ -20,21 +14,19 @@ class UserDetail extends React.Component {
     let user = this.props.user;
     let name = user.first_name + " " + user.last_name;
     return (
-      <Button variant="outlined" color="primary" fullWidth spacing={3} style={{minWidth:"200px"}}>
-        <Grid container spacing={2} alignContent="center">
+        <Grid container spacing={2} alignContent="center" spacing={3} style={{minWidth:"200px"}}>
           <Grid item>
             <Avatar alt={name} src={user.photo} />
           </Grid>
-          <Grid item xs container direction="column" spacing={2} alignItems="flex-start">
-            <Typography variant="subtitle1">
+          <Grid item xs container direction="column" spacing={1} align="left">
+            <Typography variant="body1" style={{textTransform:"none", paddingTop:"4px"}}>
               {name}
             </Typography>
-            <Typography variant="body2" color="textSecondary">
+            <Typography variant="body1" color="textSecondary" style={{textTransform:"none"}}>
               {user.description} 
             </Typography>
           </Grid>
         </Grid>
-      </Button>
     );
   }
 }

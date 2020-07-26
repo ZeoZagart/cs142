@@ -12,8 +12,9 @@
   "author": "Mendel Rosenblum <mendel@cs.stanford.edu> ",
   "license": "ISC",
   "dependencies": {
-    "@material-ui/core": "^4.9.2",
-    "@material-ui/icons": "^4.9.1",
+    "clsx": "latest",
+    "@material-ui/core": "latest",
+    "@material-ui/icons": "latest",
     "@popperjs/core": "^2.0.5",
     "express": "^4.16.4",
     "file-loader": "^3.0.1",
