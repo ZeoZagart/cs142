@@ -1,27 +1,40 @@
-import React from 'react';
+import React from "react";
 import {
-  Typography
-} from '@material-ui/core';
-import './userDetail.css';
+  Paper,
+  Grid,
+  Typography,
+  Avatar,
+  makeStyles,
+  Container,
+  Card,
+  Button,
+} from "@material-ui/core";
+import "./userDetail.css";
 
-
-/**
- * Define UserDetail, a React componment of CS142 project #5
- */
 class UserDetail extends React.Component {
   constructor(props) {
     super(props);
   }
 
   render() {
+    let user = this.props.user;
+    let name = user.first_name + " " + user.last_name;
     return (
-      <Typography variant="body1">
-        This should be the UserDetail view of the PhotoShare app. Since
-        it is invoked from React Router the params from the route will be
-        in property match. So this should show details of user:
-        {this.props.match.params.userId}. You can fetch the model for the
-        user from window.cs142models.userModel(userId).
-      </Typography>
+      <Button variant="outlined" color="primary" fullWidth spacing={3} style={{minWidth:"200px"}}>
+        <Grid container spacing={2} alignContent="center">
+          <Grid item>
+            <Avatar alt={name} src={user.photo} />
+          </Grid>
+          <Grid item xs container direction="column" spacing={2} alignItems="flex-start">
+            <Typography variant="subtitle1">
+              {name}
+            </Typography>
+            <Typography variant="body2" color="textSecondary">
+              {user.description} 
+            </Typography>
+          </Grid>
+        </Grid>
+      </Button>
     );
   }
 }

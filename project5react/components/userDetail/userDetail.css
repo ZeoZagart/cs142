@@ -1,0 +1,11 @@
+.userAvatar {
+    align-self: flex-start;
+}
+
+.userName {
+
+}
+
+.userDescription {
+    color: rgba(0, 0, 0, 0.54)
+}
