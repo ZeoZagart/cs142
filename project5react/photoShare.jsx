@@ -15,7 +15,15 @@ class PhotoShare extends React.Component {
     super(props);
     this.state = {
       users: window.cs142models.userListModel(),
+      drawerStateOpen: false 
     };
+    this.drawerStateChanged = this.drawerStateChanged.bind(this)
+  }
+
+  drawerStateChanged(isOpen) {
+    this.setState({
+      drawerStateOpen: isOpen
+    })
   }
 
   render() {
@@ -24,14 +32,11 @@ class PhotoShare extends React.Component {
         <div>
           <Grid container spacing={8}>
             <Grid item xs={12}>
-              <TopBar />
+              <TopBar drawerStateChangedTo={this.drawerStateChanged}>
+                <UserList users={this.state.users} minified={!this.state.drawerStateOpen}/>
+              </TopBar>
             </Grid>
             <div className="cs142-main-topbar-buffer" />
-            <Grid item sm={3}>
-              <Paper className="cs142-main-grid-item">
-                <UserList users={this.state.users} />
-              </Paper>
-            </Grid>
             <Grid item sm={9}>
               <Paper className="cs142-main-grid-item">
                 <Switch>

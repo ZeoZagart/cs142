@@ -27,12 +27,14 @@ class TopBar extends React.Component {
     this.setState({
       open: true,
     });
+    this.props.drawerStateChangedTo(true)
   }
 
   handleDrawerClose(event) {
     this.setState({
       open: false,
     });
+    this.props.drawerStateChangedTo(false)
   }
 
   render() {
@@ -83,6 +85,7 @@ class TopBar extends React.Component {
             </IconButton>
           </div>
           <Divider />
+          {this.props.children}
         </Drawer>
       </div>
     );

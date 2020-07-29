@@ -12,6 +12,10 @@ class UserDetail extends React.Component {
 
   render() {
     let user = this.props.user;
+    return this.props.minified == true ? this.minifiedView(user) : this.fullView(user)
+  }
+
+  fullView(user) {
     let name = user.first_name + " " + user.last_name;
     return (
         <Grid container spacing={2} alignContent="center" spacing={3} style={{minWidth:"200px"}}>
@@ -27,6 +31,12 @@ class UserDetail extends React.Component {
             </Typography>
           </Grid>
         </Grid>
+    );
+  }
+
+  minifiedView(user, name) {
+    return (
+      <Avatar alt={name} src={user.photo} />
     );
   }
 }
