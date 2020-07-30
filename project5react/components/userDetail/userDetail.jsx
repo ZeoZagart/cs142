@@ -18,15 +18,15 @@ class UserDetail extends React.Component {
   fullView(user) {
     let name = user.first_name + " " + user.last_name;
     return (
-        <Grid container spacing={2} alignContent="center" spacing={3} style={{minWidth:"200px"}}>
+        <Grid container direction="row" spacing={2} style={{width:"350px"}}>
           <Grid item>
             <Avatar alt={name} src={user.photo} />
           </Grid>
-          <Grid item xs container direction="column" spacing={1} align="left">
+          <Grid item xs container direction="column" spacing={1} align="left" zeroMinWidth>
             <Typography variant="body1" style={{textTransform:"none", paddingTop:"4px"}}>
               {name}
             </Typography>
-            <Typography variant="body1" color="textSecondary" style={{textTransform:"none"}}>
+            <Typography noWrap color="textSecondary" style={{textTransform:"none"}}>
               {user.description} 
             </Typography>
           </Grid>
