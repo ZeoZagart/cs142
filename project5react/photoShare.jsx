@@ -1,8 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { HashRouter, Route, Switch } from "react-router-dom";
-import { Grid, Typography, Paper, Slide } from "@material-ui/core";
-import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
+import { HashRouter, Route, Switch, withRouter } from "react-router-dom";
+import { Grid, Typography } from "@material-ui/core";
 import "./styles/main.css";
 
 // import necessary components
@@ -29,26 +28,55 @@ class PhotoShare extends React.Component {
   }
 
   getUserDetailsViewType() {
-    return this.state.drawerStateOpen ? "avatarName" : "avatar";
+    return this.state.drawerStateOpen === true ? "avatarName" : "avatar";
   }
 
   getUserPhotos(userId) {
-    let base = "../../images/"
-    let photos = window.cs142models.photoOfUserModel(userId).map(photo => {
+    let base = "../../images/";
+    let photos = window.cs142models.photoOfUserModel(userId).map((photo) => {
       photo.src = base + photo.file_name;
-      return photo      
-    })
+      return photo;
+    });
     return photos;
+  }
+
+  getUser(id) {
+    return this.state.users.find((user) => user._id === id)
+  }
+
+  getUserName(id) {
+    let user = this.getUser(id);
+    let name = user.first_name + " " + user.last_name;
+    return name;
+  }
+
+  getPageName(location) {
+    let splits = location.split('/').filter(it => it.length > 0);
+    if (splits.length == 0) return "Home";
+    if (splits.length == 1) {
+      if (splits.includes("users")) return "All users";
+      else return "404 NOT FOUND";
+    }
+    let userId = splits[1];
+    let userName = this.getUserName(userId);
+    if (splits.length == 2) {
+      if (splits.includes("users")) {
+        return userName;
+      } else {
+        return userName + "'s photos";
+      }
+    }
   }
 
   render() {
     let dataMarginLeft = this.state.drawerStateOpen ? 500 : 150;
+    const { location } = this.props;
     return (
       <HashRouter>
         <div>
           <Grid container spacing={8} direction="column">
             <Grid item>
-              <TopBar drawerStateChangedTo={this.drawerStateChanged}>
+              <TopBar pageName={this.getPageName(location.pathname)} drawerStateChangedTo={this.drawerStateChanged}>
                 <UserList
                   users={this.state.users}
                   viewType={this.getUserDetailsViewType()}
@@ -80,17 +108,29 @@ class PhotoShare extends React.Component {
                 <Route
                   path="/users/:userId"
                   render={(props) => {
-                    let user = this.state.users.find(
-                      (value) => value._id === props.match.params.userId
+                    let user = this.getUser(props.match.params.userId)
+                    return (
+                      <UserDetail
+                        user={user}
+                        photos={this.getUserPhotos(user._id)}
+                        viewType={"full"}
+                      />
                     );
-                    return <UserDetail user={user} photos={this.getUserPhotos(user._id)} viewType={"full"} />;
                   }}
                 />
                 <Route
                   path="/photos/:userId"
                   render={(props) => <UserPhotos {...props} />}
                 />
-                <Route path="/users" component={UserList} />
+                <Route
+                  path="/users"
+                  render={() => (
+                    <UserList
+                      users={this.state.users}
+                      viewType={"avatarName"}
+                    />
+                  )}
+                />
               </Switch>
             </Grid>
           </Grid>
@@ -100,4 +140,6 @@ class PhotoShare extends React.Component {
   }
 }
 
-ReactDOM.render(<PhotoShare />, document.getElementById("photoshareapp"));
+const PhotoShareWithRouter = withRouter(PhotoShare);
+
+ReactDOM.render(<HashRouter><PhotoShareWithRouter /></HashRouter>, document.getElementById("photoshareapp"));

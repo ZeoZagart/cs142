@@ -63,7 +63,7 @@ class TopBar extends React.Component {
               <MenuIcon />
             </IconButton>
             <Typography variant="h6" noWrap>
-              Mini variant drawer
+              {this.props.pageName}
             </Typography>
           </Toolbar>
         </AppBar>

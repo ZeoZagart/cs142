@@ -32,8 +32,8 @@ class UserList extends React.Component {
       user.photo =
         photosLoc + window.cs142models.photoOfUserModel(user._id)[0].file_name;
       return (
-        <Link to={"/users/" + user._id}>
-          <ListItem key={user._id}>
+        <Link to={"/users/" + user._id} key={user._id}>
+          <ListItem>
             <UserDetail user={user} viewType={this.props.viewType} />
           </ListItem>
         </Link>

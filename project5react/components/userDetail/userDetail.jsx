@@ -24,7 +24,7 @@ class UserDetail extends React.Component {
         return this.avatarOnly(user);
       case "avatarName":
         return this.avatarName(user);
-      default:
+      case "full":
         return this.completeProfile(user);
     }
   }
@@ -79,8 +79,11 @@ class UserDetail extends React.Component {
           <Avatar alt={name} src={user.photo} className={classes.avatar} />
         </Grid>
         <Paper className={classes.paper}>
-          <Grid container className={classes.photosContainer}>
-            {this.getPhotosInGrid(allPhotos, name)}
+          <Grid container direction="column" alignItems="center" className={classes.photosContainer}>
+            <Typography variant="h5" className={classes.userName}>{name}</Typography>
+            <Grid container>
+              {this.getPhotosInGrid(allPhotos, name)}
+            </Grid>
           </Grid>
         </Paper>
       </Grid>
@@ -144,7 +147,7 @@ const styles = (theme) => ({
   },
   photosContainer: {
     margin: "auto",
-    width:"42rem", 
+    width: "42rem",
     marginTop: "5rem",
   },
   sharedPhotos: {
@@ -153,6 +156,9 @@ const styles = (theme) => ({
     borderRadius: "1rem",
     margin: "2rem",
   },
+  userName: {
+    
+  }
 });
 
 export default withStyles(styles)(UserDetail);
