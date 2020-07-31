@@ -1,7 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { HashRouter, Route, Switch, useHistory } from "react-router-dom";
-import { Grid, Typography, Paper } from "@material-ui/core";
+import { HashRouter, Route, Switch } from "react-router-dom";
+import { Grid, Typography, Paper, Slide } from "@material-ui/core";
+import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
 import "./styles/main.css";
 
 // import necessary components
@@ -18,6 +19,7 @@ class PhotoShare extends React.Component {
       drawerStateOpen: false,
     };
     this.drawerStateChanged = this.drawerStateChanged.bind(this);
+    this.getUserDetailsViewType = this.getUserDetailsViewType.bind(this);
   }
 
   drawerStateChanged(isOpen) {
@@ -26,57 +28,65 @@ class PhotoShare extends React.Component {
     });
   }
 
+  getUserDetailsViewType() {
+    return this.state.drawerStateOpen ? "avatarName" : "avatar";
+  }
+
+  getUserPhotos() {
+    return window.cs142models.photoOfUserModel()
+  }
 
   render() {
+    let dataMarginLeft = this.state.drawerStateOpen ? 500 : 150;
     return (
       <HashRouter>
         <div>
-          <Grid container spacing={8}>
+          <Grid container spacing={8} direction="column">
             <Grid item>
               <TopBar drawerStateChangedTo={this.drawerStateChanged}>
                 <UserList
                   users={this.state.users}
-                  minified={!this.state.drawerStateOpen}
+                  viewType={this.getUserDetailsViewType()}
                 />
               </TopBar>
             </Grid>
             <div className="cs142-main-topbar-buffer" />
-            <Grid item xs={9} alignContent="center">
-              <Paper className="cs142-main-grid-item">
-                <Switch>
-                  <Route
-                    exact
-                    path="/"
-                    render={() => (
-                      <Typography variant="body1">
-                        Welcome to your photosharing app! This{" "}
-                        <a href="https://material-ui.com/demos/paper/">Paper</a>{" "}
-                        component displays the main content of the application.
-                        The {"sm={9}"} prop in the{" "}
-                        <a href="https://material-ui.com/layout/grid/">Grid</a>{" "}
-                        item component makes it responsively display 9/12 of the
-                        window. The Switch component enables us to conditionally
-                        render different components to this part of the screen.
-                        You don&apos;t need to display anything here on the
-                        homepage, so you should delete this Route component once
-                        you get started.
-                      </Typography>
-                    )}
-                  />
-                  <Route
-                    path="/users/:userId"
-                    render={(props) => {
-                      let user = this.state.users.find((value) => value._id === props.match.params.userId)
-                      return <UserDetail user={user} minified={false}/>;
-                    }}
-                  />
-                  <Route
-                    path="/photos/:userId"
-                    render={(props) => <UserPhotos {...props} />}
-                  />
-                  <Route path="/users" component={UserList} />
-                </Switch>
-              </Paper>
+            <Grid item style={{ marginLeft: dataMarginLeft }}>
+              <Switch>
+                <Route
+                  exact
+                  path="/"
+                  render={() => (
+                    <Typography variant="body1">
+                      Welcome to your photosharing app! This{" "}
+                      <a href="https://material-ui.com/demos/paper/">Paper</a>{" "}
+                      component displays the main content of the application.
+                      The {"sm={9}"} prop in the{" "}
+                      <a href="https://material-ui.com/layout/grid/">Grid</a>{" "}
+                      item component makes it responsively display 9/12 of the
+                      window. The Switch component enables us to conditionally
+                      render different components to this part of the screen.
+                      You don&apos;t need to display anything here on the
+                      homepage, so you should delete this Route component once
+                      you get started.
+                    </Typography>
+                  )}
+                />
+                <Route
+                  path="/users/:userId"
+                  render={(props) => {
+                    let user = this.state.users.find(
+                      (value) => value._id === props.match.params.userId
+                    );
+                    return <UserDetail user={user} photos={this.getUserPhotos()} viewType={"full"} />;
+                  }}
+                />
+                <Route
+                  path="/photos/:userId"
+                  render={(props) => <UserPhotos {...props} />}
+                />
+                <Route path="/users" component={UserList} />
+              </Switch>
             </Grid>
           </Grid>
         </div>

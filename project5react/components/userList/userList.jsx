@@ -34,7 +34,7 @@ class UserList extends React.Component {
       return (
         <Link to={"/users/" + user._id}>
           <ListItem key={user._id}>
-            <UserDetail user={user} minified={this.props.minified} />
+            <UserDetail user={user} viewType={this.props.viewType} />
           </ListItem>
         </Link>
       );

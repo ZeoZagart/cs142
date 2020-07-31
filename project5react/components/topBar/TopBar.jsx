@@ -27,14 +27,14 @@ class TopBar extends React.Component {
     this.setState({
       open: true,
     });
-    this.props.drawerStateChangedTo(true)
+    this.props.drawerStateChangedTo(true);
   }
 
   handleDrawerClose(event) {
     this.setState({
       open: false,
     });
-    this.props.drawerStateChangedTo(false)
+    this.props.drawerStateChangedTo(false);
   }
 
   render() {
@@ -44,6 +44,7 @@ class TopBar extends React.Component {
       <div className={classes.root}>
         <CssBaseline />
         <AppBar
+          color="secondary"
           position="fixed"
           className={clsx(classes.appBar, {
             [classes.appBarShift]: open,
