@@ -32,8 +32,13 @@ class PhotoShare extends React.Component {
     return this.state.drawerStateOpen ? "avatarName" : "avatar";
   }
 
-  getUserPhotos() {
-    return window.cs142models.photoOfUserModel()
+  getUserPhotos(userId) {
+    let base = "../../images/"
+    let photos = window.cs142models.photoOfUserModel(userId).map(photo => {
+      photo.src = base + photo.file_name;
+      return photo      
+    })
+    return photos;
   }
 
   render() {
@@ -78,7 +83,7 @@ class PhotoShare extends React.Component {
                     let user = this.state.users.find(
                       (value) => value._id === props.match.params.userId
                     );
-                    return <UserDetail user={user} photos={this.getUserPhotos()} viewType={"full"} />;
+                    return <UserDetail user={user} photos={this.getUserPhotos(user._id)} viewType={"full"} />;
                   }}
                 />
                 <Route

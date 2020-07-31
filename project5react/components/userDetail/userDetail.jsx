@@ -1,5 +1,14 @@
 import React from "react";
-import { Paper, Grid, Typography, Avatar } from "@material-ui/core";
+import {
+  Paper,
+  Grid,
+  Typography,
+  Avatar,
+  CardMedia,
+  Card,
+  GridList,
+  GridListTile,
+} from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
 
 class UserDetail extends React.Component {
@@ -21,34 +30,57 @@ class UserDetail extends React.Component {
   }
 
   getLongText() {
+    let { classes } = this.props;
     let largeList = [];
     let largeSize = 100;
     for (var i = 0; i < largeSize; i++) {
       largeList.push(i);
     }
-    return largeList.map((item) => (
+    let p = largeList.map((item) => (
       <Typography key={item}>
         Lorem ipsum dolor sit amet, consectetur adipisicing elit. Non illo amet
         quaerat deleniti ipsa eligendi. Corporis fuga, necessitatibus illo porro
         dolore cum, delectus quo enim ipsam amet omnis nam veritatis?
       </Typography>
     ));
+
+    return (
+      <Typography variant="h4" color="secondary" className={classes.aboutUser}>
+        {p}
+      </Typography>
+    );
+  }
+
+  getPhotosInGrid(photos, name) {
+    let { classes } = this.props;
+    let altText = name + "'s photo";
+    return photos.map((photo, index) => {
+      return (
+        <Grid item key={index}>
+          <CardMedia
+            component="img"
+            image={photo.src}
+            title={altText}
+            className={classes.sharedPhotos}
+          />
+        </Grid>
+      );
+    });
   }
 
   completeProfile(user) {
     let allPhotos = this.props.photos;
     let name = user.first_name + " " + user.last_name;
     let { classes } = this.props;
+    console.log("photos : " + allPhotos.map((photo) => photo.src));
     return (
-      <Grid container direction="column" spacing={3} className={classes.root}>
+      <Grid container direction="column" className={classes.root}>
         <Grid>
           <Avatar alt={name} src={user.photo} className={classes.avatar} />
         </Grid>
         <Paper className={classes.paper}>
-          <Grid container spacing={6} className={classes.aboutUser}>
-            <Typography variant="h4" color="secondary">
-              {name}
-            </Typography>
+          <Grid container className={classes.photosContainer}>
+            {this.getPhotosInGrid(allPhotos, name)}
           </Grid>
         </Paper>
       </Grid>
@@ -99,17 +131,27 @@ const styles = (theme) => ({
     alignItems: "center",
   },
   avatar: {
-    width: 140,
-    height: 140,
-    top: 70,
+    width: "10rem",
+    height: "10rem",
+    top: "5rem",
   },
   paper: {
-    width: "100%",
-    textAlign: "center",
-    borderRadius: 15,
+    width: "60rem",
+    borderRadius: "1rem",
   },
   aboutUser: {
-    marginTop: 80,
+    marginTop: "5rem",
+  },
+  photosContainer: {
+    margin: "auto",
+    width:"42rem", 
+    marginTop: "5rem",
+  },
+  sharedPhotos: {
+    width: "10rem",
+    height: "10rem",
+    borderRadius: "1rem",
+    margin: "2rem",
   },
 });
 
