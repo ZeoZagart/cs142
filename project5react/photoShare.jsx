@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { HashRouter, Route, Switch } from "react-router-dom";
+import { HashRouter, Route, Switch, useHistory } from "react-router-dom";
 import { Grid, Typography, Paper } from "@material-ui/core";
 import "./styles/main.css";
 
@@ -15,29 +15,33 @@ class PhotoShare extends React.Component {
     super(props);
     this.state = {
       users: window.cs142models.userListModel(),
-      drawerStateOpen: false 
+      drawerStateOpen: false,
     };
-    this.drawerStateChanged = this.drawerStateChanged.bind(this)
+    this.drawerStateChanged = this.drawerStateChanged.bind(this);
   }
 
   drawerStateChanged(isOpen) {
     this.setState({
-      drawerStateOpen: isOpen
-    })
+      drawerStateOpen: isOpen,
+    });
   }
+
 
   render() {
     return (
       <HashRouter>
         <div>
           <Grid container spacing={8}>
-            <Grid item xs={12}>
+            <Grid item>
               <TopBar drawerStateChangedTo={this.drawerStateChanged}>
-                <UserList users={this.state.users} minified={!this.state.drawerStateOpen}/>
+                <UserList
+                  users={this.state.users}
+                  minified={!this.state.drawerStateOpen}
+                />
               </TopBar>
             </Grid>
             <div className="cs142-main-topbar-buffer" />
-            <Grid item sm={9}>
+            <Grid item xs={9} alignContent="center">
               <Paper className="cs142-main-grid-item">
                 <Switch>
                   <Route
@@ -61,7 +65,10 @@ class PhotoShare extends React.Component {
                   />
                   <Route
                     path="/users/:userId"
-                    render={(props) => <UserDetail {...props} />}
+                    render={(props) => {
+                      let user = this.state.users.find((value) => value._id === props.match.params.userId)
+                      return <UserDetail user={user} minified={false}/>;
+                    }}
                   />
                   <Route
                     path="/photos/:userId"

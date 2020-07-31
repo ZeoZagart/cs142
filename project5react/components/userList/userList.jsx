@@ -1,13 +1,8 @@
 import React from "react";
-import {
-  Divider,
-  List,
-  ListItem,
-  Typography,
-  makeStyles,
-} from "@material-ui/core";
+import { List, ListItem, makeStyles } from "@material-ui/core";
 import "./userList.css";
 import UserDetail from "../userDetail/userDetail";
+import { Link } from "react-router-dom";
 
 /**
  * Define UserList, a React componment of CS142 project #5
@@ -37,9 +32,11 @@ class UserList extends React.Component {
       user.photo =
         photosLoc + window.cs142models.photoOfUserModel(user._id)[0].file_name;
       return (
-        <ListItem key={user._id}>
-          <UserDetail user={user} minified={this.props.minified}/>
-        </ListItem>
+        <Link to={"/users/" + user._id}>
+          <ListItem key={user._id}>
+            <UserDetail user={user} minified={this.props.minified} />
+          </ListItem>
+        </Link>
       );
     });
     console.log(userViews);
