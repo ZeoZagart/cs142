@@ -8,12 +8,17 @@ import {
   Card,
   GridList,
   GridListTile,
+  Dialog,
 } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
 
 class UserDetail extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      isShowingPhotoDialog: false,
+      currentPhotoInDialog: null,
+    };
   }
 
   render() {
@@ -51,6 +56,20 @@ class UserDetail extends React.Component {
     );
   }
 
+  openPhoto(photo) {
+    this.setState({
+      isShowingPhotoDialog: true,
+      currentPhotoInDialog: photo,
+    });
+  }
+
+  closePhoto() {
+    this.setState({
+      isShowingPhotoDialog: false,
+      currentPhotoInDialog: null,
+    });
+  }
+
   getPhotosInGrid(photos, name) {
     let { classes } = this.props;
     let altText = name + "'s photo";
@@ -61,6 +80,9 @@ class UserDetail extends React.Component {
             component="img"
             image={photo.src}
             title={altText}
+            onClick={() => {
+              this.openPhoto(photo);
+            }}
             className={classes.sharedPhotos}
           />
         </Grid>
@@ -70,13 +92,37 @@ class UserDetail extends React.Component {
 
   isCurrentPagePhotos() {
     let location = this.props.location.pathname;
-    console.log("LOCATION : " + location)
+    console.log("LOCATION : " + location);
     return location.includes("photos");
+  }
+
+  getPhotoDialog(name) {
+    let { classes } = this.props;
+    let altText = name + "'s photo";
+    let openPhoto = this.state.currentPhotoInDialog;
+    return (
+      <Grid container direction="row">
+        <Grid item xs>
+          <CardMedia
+            component="img"
+            image={openPhoto.src}
+            title={altText}
+            className={classes.openPhoto}
+          />
+        </Grid>
+        <Grid item xs container direction="column" className={classes.photoComments}>
+          <Typography>POKEMON</Typography>
+          <Typography>POKEMON</Typography>
+          <Typography>POKEMON</Typography>
+          <Typography>POKEMON</Typography>
+        </Grid>
+      </Grid>
+    );
   }
 
   completeProfile(user) {
     let allPhotos = this.props.photos;
-    let isPhotos = this.isCurrentPagePhotos()
+    let isPhotos = this.isCurrentPagePhotos();
     let name = user.first_name + " " + user.last_name;
     let { classes } = this.props;
     console.log("photos : " + allPhotos.map((photo) => photo.src));
@@ -86,17 +132,35 @@ class UserDetail extends React.Component {
           <Avatar alt={name} src={user.photo} className={classes.avatar} />
         </Grid>
         <Paper className={classes.paper}>
-          <Grid container direction="column" alignItems="center" className={classes.photosContainer}>
-            <Typography variant="h5" className={classes.userName}>{name}</Typography>
+          <Grid
+            container
+            direction="column"
+            alignItems="center"
+            className={classes.photosContainer}
+          >
+            <Typography variant="h5" className={classes.userName}>
+              {name}
+            </Typography>
             <Grid container>
-              {
-                isPhotos === false 
-                  ? <Typography variant="body1" className={classes.userName}>{user.description}</Typography>
-                  : this.getPhotosInGrid(allPhotos, name)
-              }
+              {isPhotos === false ? (
+                <Typography variant="body1" className={classes.userName}>
+                  {user.description}
+                </Typography>
+              ) : (
+                this.getPhotosInGrid(allPhotos, name)
+              )}
             </Grid>
           </Grid>
         </Paper>
+        {this.state.isShowingPhotoDialog && (
+          <Dialog
+            open={this.state.isShowingPhotoDialog}
+            onClose={() => this.closePhoto()}
+            className={classes.photoDialog}
+          >
+            {this.getPhotoDialog(name)}
+          </Dialog>
+        )}
       </Grid>
     );
   }
@@ -167,9 +231,16 @@ const styles = (theme) => ({
     borderRadius: "1rem",
     margin: "2rem",
   },
-  userName: {
-    
-  }
+  openPhoto: {
+    width: "20rem",
+    height: "20rem",
+  },
+  photoDialog: {
+  },
+  photoComments: {
+    margin: "1rem",
+  },
+  userName: {},
 });
 
 export default withStyles(styles)(UserDetail);
