@@ -15,18 +15,7 @@ class UserList extends React.Component {
     };
   }
 
-  useStyles() {
-    return makeStyles((theme) => ({
-      root: {
-        flexGrow: 1,
-        overflow: "hidden",
-        padding: theme.spacing(0, 3),
-      },
-    }));
-  }
-
   getUsers() {
-    const classes = this.useStyles();
     let photosLoc = "../../images/";
     let userViews = this.state.users.map((user, indx) => {
       user.photo =
@@ -40,16 +29,11 @@ class UserList extends React.Component {
       );
     });
     console.log(userViews);
-    return (
-      <List component="nav" className={classes.userList}>
-        {userViews}
-      </List>
-    );
+    return <List>{userViews}</List>;
   }
 
   render() {
-    const classes = this.useStyles();
-    return <React.Fragment>{this.getUsers()}</React.Fragment>;
+    return this.getUsers();
   }
 }
 

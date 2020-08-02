@@ -11,6 +11,7 @@ import {
   Dialog,
 } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
+import CommentList from "../CommentList";
 
 class UserDetail extends React.Component {
   constructor(props) {
@@ -96,13 +97,30 @@ class UserDetail extends React.Component {
     return location.includes("photos");
   }
 
+  getUserPhoto = (user) => window.cs142models.photoOfUserModel(user._id)[0].src;
+
+  getCommentsOnPhoto(photoId) {
+    let allComments = window.cs142models.commentOnPhotoModel(photoId);
+    return allComments.map((comment) => {
+      console.log(comment);
+      return {
+        name: comment.user.first_name + " " + comment.user.last_name,
+        photo: this.getUserPhoto(comment.user),
+        text: comment.comment,
+        userId: comment.user._id,
+      };
+    });
+  }
+
   getPhotoDialog(name) {
     let { classes } = this.props;
     let altText = name + "'s photo";
     let openPhoto = this.state.currentPhotoInDialog;
+    let comments = this.getCommentsOnPhoto(openPhoto._id);
+    let imagesPath = "../../images/";
     return (
       <Grid container direction="row">
-        <Grid item xs>
+        <Grid item xs className={classes.photoAndComments}>
           <CardMedia
             component="img"
             image={openPhoto.src}
@@ -110,11 +128,8 @@ class UserDetail extends React.Component {
             className={classes.openPhoto}
           />
         </Grid>
-        <Grid item xs container direction="column" className={classes.photoComments}>
-          <Typography>POKEMON</Typography>
-          <Typography>POKEMON</Typography>
-          <Typography>POKEMON</Typography>
-          <Typography>POKEMON</Typography>
+        <Grid item xs align="left" zeroMinWidth className={classes.photoComments}>
+          <CommentList comments={comments} imagesPath={imagesPath} />
         </Grid>
       </Grid>
     );
@@ -127,33 +142,36 @@ class UserDetail extends React.Component {
     let { classes } = this.props;
     console.log("photos : " + allPhotos.map((photo) => photo.src));
     return (
-      <Grid container direction="column" className={classes.root}>
-        <Grid>
-          <Avatar alt={name} src={user.photo} className={classes.avatar} />
-        </Grid>
-        <Paper className={classes.paper}>
-          <Grid
-            container
-            direction="column"
-            alignItems="center"
-            className={classes.photosContainer}
-          >
-            <Typography variant="h5" className={classes.userName}>
-              {name}
-            </Typography>
-            <Grid container>
-              {isPhotos === false ? (
-                <Typography variant="body1" className={classes.userName}>
-                  {user.description}
-                </Typography>
-              ) : (
-                this.getPhotosInGrid(allPhotos, name)
-              )}
-            </Grid>
+      <React.Fragment>
+        <Grid container direction="column" className={classes.root}>
+          <Grid>
+            <Avatar alt={name} src={user.photo} className={classes.avatar} />
           </Grid>
-        </Paper>
+          <Paper className={classes.paper}>
+            <Grid
+              container
+              direction="column"
+              alignItems="center"
+              className={classes.photosContainer}
+            >
+              <Typography variant="h5" className={classes.userName}>
+                {name}
+              </Typography>
+              <Grid container>
+                {isPhotos === false ? (
+                  <Typography variant="body1" className={classes.userName}>
+                    {user.description}
+                  </Typography>
+                ) : (
+                  this.getPhotosInGrid(allPhotos, name)
+                )}
+              </Grid>
+            </Grid>
+          </Paper>
+        </Grid>
         {this.state.isShowingPhotoDialog && (
           <Dialog
+            zeroMinWidth
             open={this.state.isShowingPhotoDialog}
             onClose={() => this.closePhoto()}
             className={classes.photoDialog}
@@ -161,7 +179,7 @@ class UserDetail extends React.Component {
             {this.getPhotoDialog(name)}
           </Dialog>
         )}
-      </Grid>
+      </React.Fragment>
     );
   }
 
@@ -231,14 +249,21 @@ const styles = (theme) => ({
     borderRadius: "1rem",
     margin: "2rem",
   },
+  photoDialog: {
+    margin: 0,
+    padding: 0,
+  },
+  photoAndComments: {
+    width: "40rem",
+    height: "20rem",
+  },
   openPhoto: {
     width: "20rem",
     height: "20rem",
   },
-  photoDialog: {
-  },
   photoComments: {
-    margin: "1rem",
+    width: "20rem",
+    height: "20rem",
   },
   userName: {},
 });
