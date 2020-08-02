@@ -119,8 +119,8 @@ class UserDetail extends React.Component {
     let comments = this.getCommentsOnPhoto(openPhoto._id);
     let imagesPath = "../../images/";
     return (
-      <Grid container direction="row">
-        <Grid item xs className={classes.photoAndComments}>
+      <Grid container direction="row" className={classes.photoAndComments}>
+        <Grid xs className={classes.openPhoto}>
           <CardMedia
             component="img"
             image={openPhoto.src}
@@ -128,7 +128,7 @@ class UserDetail extends React.Component {
             className={classes.openPhoto}
           />
         </Grid>
-        <Grid item xs align="left" zeroMinWidth className={classes.photoComments}>
+        <Grid xs align="left" zeroMinWidth className={classes.photoComments}>
           <CommentList comments={comments} imagesPath={imagesPath} />
         </Grid>
       </Grid>
@@ -250,12 +250,9 @@ const styles = (theme) => ({
     margin: "2rem",
   },
   photoDialog: {
-    margin: 0,
-    padding: 0,
   },
   photoAndComments: {
-    width: "40rem",
-    height: "20rem",
+    maxHeight: "20rem",
   },
   openPhoto: {
     width: "20rem",
@@ -263,7 +260,7 @@ const styles = (theme) => ({
   },
   photoComments: {
     width: "20rem",
-    height: "20rem",
+    maxHeight: "20rem",
   },
   userName: {},
 });
