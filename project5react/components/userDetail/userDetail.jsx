@@ -68,8 +68,15 @@ class UserDetail extends React.Component {
     });
   }
 
+  isCurrentPagePhotos() {
+    let location = this.props.location.pathname;
+    console.log("LOCATION : " + location)
+    return location.includes("photos");
+  }
+
   completeProfile(user) {
     let allPhotos = this.props.photos;
+    let isPhotos = this.isCurrentPagePhotos()
     let name = user.first_name + " " + user.last_name;
     let { classes } = this.props;
     console.log("photos : " + allPhotos.map((photo) => photo.src));
@@ -82,7 +89,11 @@ class UserDetail extends React.Component {
           <Grid container direction="column" alignItems="center" className={classes.photosContainer}>
             <Typography variant="h5" className={classes.userName}>{name}</Typography>
             <Grid container>
-              {this.getPhotosInGrid(allPhotos, name)}
+              {
+                isPhotos === false 
+                  ? <Typography variant="body1" className={classes.userName}>{user.description}</Typography>
+                  : this.getPhotosInGrid(allPhotos, name)
+              }
             </Grid>
           </Grid>
         </Paper>

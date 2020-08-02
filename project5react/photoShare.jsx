@@ -41,7 +41,7 @@ class PhotoShare extends React.Component {
   }
 
   getUser(id) {
-    return this.state.users.find((user) => user._id === id)
+    return this.state.users.find((user) => user._id === id);
   }
 
   getUserName(id) {
@@ -51,7 +51,7 @@ class PhotoShare extends React.Component {
   }
 
   getPageName(location) {
-    let splits = location.split('/').filter(it => it.length > 0);
+    let splits = location.split("/").filter((it) => it.length > 0);
     if (splits.length == 0) return "Home";
     if (splits.length == 1) {
       if (splits.includes("users")) return "All users";
@@ -68,15 +68,55 @@ class PhotoShare extends React.Component {
     }
   }
 
+  getUserId(location) {
+    let splits = location.split("/").filter((it) => it.length > 0);
+    if (splits.length == 2) {
+      return splits[1];
+    }
+    return "";
+  }
+
+  getUserPage(location) {
+    let splits = location.split("/").filter((it) => it.length > 0);
+    if (splits.length == 2) {
+      if (splits.includes("users")) {
+        return "DETAILS";
+      } else {
+        return "PHOTOS";
+      }
+    } else {
+      return "NOT_SHOWN";
+    }
+  }
+
+  switchUserPageTo(destination, location, history) {
+    let userId = this.getUserId(location);
+    let userPage = this.getUserPage(location);
+    if (userPage === "NOT_SHOWN") return;
+    let newLocation =
+      destination === "PHOTOS"
+        ? location.replace("users", "photos")
+        : location.replace("photos", "users");
+    console.log("NEW LOC : " + newLocation);
+    history.push(newLocation);
+  }
+
   render() {
     let dataMarginLeft = this.state.drawerStateOpen ? 500 : 150;
-    const { location } = this.props;
+    const { location, history } = this.props;
     return (
       <HashRouter>
         <div>
           <Grid container spacing={8} direction="column">
             <Grid item>
-              <TopBar pageName={this.getPageName(location.pathname)} drawerStateChangedTo={this.drawerStateChanged}>
+              <TopBar
+                pageName={this.getPageName(location.pathname)}
+                drawerStateChangedTo={this.drawerStateChanged}
+                userSelectorShown={() => this.getUserPage(location.pathname)}
+                onPageChange={(destination) =>
+                  this.switchUserPageTo(destination, location.pathname, history)
+                }
+              >
                 <UserList
                   users={this.state.users}
                   viewType={this.getUserDetailsViewType()}
@@ -108,19 +148,31 @@ class PhotoShare extends React.Component {
                 <Route
                   path="/users/:userId"
                   render={(props) => {
-                    let user = this.getUser(props.match.params.userId)
+                    let user = this.getUser(props.match.params.userId);
                     return (
                       <UserDetail
                         user={user}
                         photos={this.getUserPhotos(user._id)}
                         viewType={"full"}
+                        {...props}
                       />
                     );
                   }}
                 />
                 <Route
                   path="/photos/:userId"
-                  render={(props) => <UserPhotos {...props} />}
+                  render={(props) => {
+                    let user = this.getUser(props.match.params.userId);
+                    console.log("HELLO :: " + props.location.pathname)
+                    return (
+                      <UserDetail
+                        user={user}
+                        photos={this.getUserPhotos(user._id)}
+                        viewType={"full"}
+                        {...props}
+                      />
+                    );
+                  }}
                 />
                 <Route
                   path="/users"
@@ -142,4 +194,9 @@ class PhotoShare extends React.Component {
 
 const PhotoShareWithRouter = withRouter(PhotoShare);
 
-ReactDOM.render(<HashRouter><PhotoShareWithRouter /></HashRouter>, document.getElementById("photoshareapp"));
+ReactDOM.render(
+  <HashRouter>
+    <PhotoShareWithRouter />
+  </HashRouter>,
+  document.getElementById("photoshareapp")
+);

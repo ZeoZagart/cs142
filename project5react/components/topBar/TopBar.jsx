@@ -8,6 +8,8 @@ import {
   IconButton,
   Drawer,
   CssBaseline,
+  ButtonGroup,
+  Button,
 } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
 import MenuIcon from "@material-ui/icons/Menu";
@@ -37,7 +39,29 @@ class TopBar extends React.Component {
     this.props.drawerStateChangedTo(false);
   }
 
+  getUserPageSelector() {
+    const { classes } = this.props;
+    let userSelector = this.props.userSelectorShown();
+    console.log("USER SELECTOR :  " + userSelector)
+    if (userSelector === "NOT_SHOWN") {
+      return <React.Fragment />;
+    } else if (userSelector === "DETAILS") {
+      return (
+        <ButtonGroup className={classes.buttonGroup}>
+          <Button disabled className={classes.pageButton} style={{color: "secondary"}}>About</Button>
+          <Button className={classes.pageButton} onClick={() => this.props.onPageChange("PHOTOS")}>Photos</Button>
+        </ButtonGroup>
+      );
+    } else if (userSelector === "PHOTOS") {
+      return <ButtonGroup className={classes.buttonGroup}>
+        <Button className={classes.pageButton} onClick={() => this.props.onPageChange("DETAILS")}>About</Button>
+        <Button disabled className={classes.pageButton} style={{color: "secondary"}}>Photos</Button>
+      </ButtonGroup>;
+    }
+  }
+
   render() {
+    console.log("render called")
     const { classes } = this.props;
     open = this.state.open;
     return (
@@ -62,9 +86,10 @@ class TopBar extends React.Component {
             >
               <MenuIcon />
             </IconButton>
-            <Typography variant="h6" noWrap>
+            <Typography variant="h6" className={classes.pageTitle}>
               {this.props.pageName}
             </Typography>
+            {this.getUserPageSelector()}
           </Toolbar>
         </AppBar>
         <Drawer
@@ -150,6 +175,20 @@ const styles = (theme) => ({
     padding: theme.spacing(0, 1),
     // necessary for content to be below app bar
     ...theme.mixins.toolbar,
+  },
+  pageTitle: {
+    flexGrow: 1,
+  },
+  buttonGroup: {
+    color: "white",
+  },
+  pageButton: {
+    textTransform: "none",
+    color: "white",
+  },
+  pageButton: {
+    // textTransform: "none",
+    color: "white",
   },
   content: {
     flexGrow: 1,
