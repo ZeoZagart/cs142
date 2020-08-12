@@ -3,6 +3,7 @@ import { List, ListItem, makeStyles } from "@material-ui/core";
 import "./userList.css";
 import UserDetail from "../userDetail/userDetail";
 import { Link } from "react-router-dom";
+import { fetchUserPhotos } from "../../WebFetcher.js";
 
 /**
  * Define UserList, a React componment of CS142 project #5
@@ -11,7 +12,7 @@ class UserList extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      users: window.cs142models.userListModel(),
+      users: this.props.users,
     };
   }
 
@@ -19,7 +20,7 @@ class UserList extends React.Component {
     let photosLoc = "../../images/";
     let userViews = this.state.users.map((user, indx) => {
       user.photo =
-        photosLoc + window.cs142models.photoOfUserModel(user._id)[0].file_name;
+        photosLoc + fetchUserPhotos(user._id)[0].file_name;
       return (
         <Link to={"/users/" + user._id} key={user._id}>
           <ListItem>

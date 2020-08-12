@@ -16,7 +16,6 @@ class CommentList extends React.Component {
       comment.photo = photosBase + comment.photo;
       return comment;
     });
-    console.log(comments);
     let commentsView = comments.map((comment, idx) => {
       return (
         <Link to={"/users/" + comment.userId} key={idx}>

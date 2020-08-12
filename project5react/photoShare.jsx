@@ -15,19 +15,21 @@ class PhotoShare extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      users: window.cs142models.userListModel(),
+      users: fetcher.fetchUserList(),
       drawerStateOpen: false,
     };
     this.drawerStateChanged = this.drawerStateChanged.bind(this);
     this.getUserDetailsViewType = this.getUserDetailsViewType.bind(this);
-    this.fetchUserList();
   }
 
   fetchUserList() {
     let userList = fetcher.fetchUserList();
     this.setState({
-      users: userList
-    })
+      users: userList,
+    });
+    console.log("setting users : ")
+    console.log(this.state.users)
+    console.log(userList)
   }
 
   drawerStateChanged(isOpen) {
@@ -42,7 +44,7 @@ class PhotoShare extends React.Component {
 
   getUserPhotos(userId) {
     let base = "../../images/";
-    let photos = window.cs142models.photoOfUserModel(userId).map((photo) => {
+    let photos = fetcher.fetchUserPhotos(userId).map((photo) => {
       photo.src = base + photo.file_name;
       return photo;
     });
@@ -50,6 +52,8 @@ class PhotoShare extends React.Component {
   }
 
   getUser(id) {
+    console.log ("User list : ")
+    console.log(this.state.users)
     return this.state.users.find((user) => user._id === id);
   }
 

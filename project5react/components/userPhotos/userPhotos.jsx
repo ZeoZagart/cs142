@@ -3,6 +3,7 @@ import {
   Typography
 } from '@material-ui/core';
 import './userPhotos.css';
+import { fetchUserPhotos } from '../../WebFetcher.js';
 
 
 /**

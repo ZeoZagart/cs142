@@ -98,17 +98,16 @@ class UserDetail extends React.Component {
     return location.includes("photos");
   }
 
-  getUserPhoto = (user) => window.cs142models.photoOfUserModel(user._id)[0].src;
+  getUserPhoto = (userId) => fetchUserPhotos(userId)[0].file_name;
 
   getPhotoComments = (photoId) => fetchPhotoComments(photoId);
 
   getCommentsOnPhoto(photoId) {
     let allComments = this.getPhotoComments(photoId);
     return allComments.map((comment) => {
-      console.log(comment);
       return {
         name: comment.user.first_name + " " + comment.user.last_name,
-        photo: this.getUserPhoto(comment.user),
+        photo: this.getUserPhoto(comment.user._id),
         text: comment.comment,
         userId: comment.user._id,
       };

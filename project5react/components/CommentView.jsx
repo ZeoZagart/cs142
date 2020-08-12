@@ -10,7 +10,7 @@ class CommentView extends React.Component {
     let name = this.props.name;
     let avatar = this.props.photo;
     let comment = this.props.comment;
-
+    console.log (`name : ${name} : photo : ${avatar}`)
     return (
       <Grid container direction="row" spacing={2} style={{ width: "350px" }}>
         <Grid item>
