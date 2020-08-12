@@ -9,6 +9,7 @@ import TopBar from "./components/topBar/TopBar";
 import UserDetail from "./components/userDetail/UserDetail";
 import UserList from "./components/userList/UserList";
 import UserPhotos from "./components/userPhotos/UserPhotos";
+import * as fetcher from "./WebFetcher.js";
 
 class PhotoShare extends React.Component {
   constructor(props) {
@@ -19,6 +20,14 @@ class PhotoShare extends React.Component {
     };
     this.drawerStateChanged = this.drawerStateChanged.bind(this);
     this.getUserDetailsViewType = this.getUserDetailsViewType.bind(this);
+    this.fetchUserList();
+  }
+
+  fetchUserList() {
+    let userList = fetcher.fetchUserList();
+    this.setState({
+      users: userList
+    })
   }
 
   drawerStateChanged(isOpen) {

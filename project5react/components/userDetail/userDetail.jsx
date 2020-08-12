@@ -12,6 +12,7 @@ import {
 } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
 import CommentList from "../CommentList";
+import { fetchPhotoComments, fetchUserPhotos } from "../../WebFetcher.js";
 
 class UserDetail extends React.Component {
   constructor(props) {
@@ -99,8 +100,10 @@ class UserDetail extends React.Component {
 
   getUserPhoto = (user) => window.cs142models.photoOfUserModel(user._id)[0].src;
 
+  getPhotoComments = (photoId) => fetchPhotoComments(photoId);
+
   getCommentsOnPhoto(photoId) {
-    let allComments = window.cs142models.commentOnPhotoModel(photoId);
+    let allComments = this.getPhotoComments(photoId);
     return allComments.map((comment) => {
       console.log(comment);
       return {
