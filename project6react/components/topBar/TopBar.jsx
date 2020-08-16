@@ -61,7 +61,6 @@ class TopBar extends React.Component {
   }
 
   render() {
-    console.log("render called")
     const { classes } = this.props;
     open = this.state.open;
     return (

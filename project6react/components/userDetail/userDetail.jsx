@@ -5,14 +5,12 @@ import {
   Typography,
   Avatar,
   CardMedia,
-  Card,
-  GridList,
-  GridListTile,
   Dialog,
 } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
 import CommentList from "../CommentList";
-import { fetchPhotoComments, fetchUserPhotos } from "../../WebFetcher.js";
+import { fetchUserById, fetchUserPhotos } from "../../WebFetcher.js";
+import { all } from "bluebird";
 
 class UserDetail extends React.Component {
   constructor(props) {
@@ -99,26 +97,27 @@ class UserDetail extends React.Component {
   }
 
   getUserPhoto = (userId) => fetchUserPhotos(userId)[0].file_name;
+  
+  getUserById = (userId) => fetchUserById(userId);
 
-  getPhotoComments = (photoId) => fetchPhotoComments(photoId);
-
-  getCommentsOnPhoto(photoId) {
-    let allComments = this.getPhotoComments(photoId);
+  getCommentsOnPhoto(photo) {
+    let allComments = photo.comments
     return allComments.map((comment) => {
+      let user = this.getUserById(comment.user_id)
       return {
-        name: comment.user.first_name + " " + comment.user.last_name,
-        photo: this.getUserPhoto(comment.user._id),
+        name: user.first_name + " " + user.last_name,
+        photo: this.getUserPhoto(comment.user_id),
         text: comment.comment,
-        userId: comment.user._id,
-      };
-    });
+        userId: comment.user_id,
+      }
+    })
   }
 
   getPhotoDialog(name) {
     let { classes } = this.props;
     let altText = name + "'s photo";
     let openPhoto = this.state.currentPhotoInDialog;
-    let comments = this.getCommentsOnPhoto(openPhoto._id);
+    let comments = this.getCommentsOnPhoto(openPhoto);
     let imagesPath = "../../images/";
     return (
       <Grid container direction="row" className={classes.photoAndComments}>

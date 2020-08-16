@@ -8,7 +8,6 @@ import "./styles/main.css";
 import TopBar from "./components/topBar/TopBar";
 import UserDetail from "./components/userDetail/UserDetail";
 import UserList from "./components/userList/UserList";
-import UserPhotos from "./components/userPhotos/UserPhotos";
 import * as fetcher from "./WebFetcher.js";
 
 class PhotoShare extends React.Component {
@@ -27,9 +26,7 @@ class PhotoShare extends React.Component {
     this.setState({
       users: userList,
     });
-    console.log("setting users : ")
-    console.log(this.state.users)
-    console.log(userList)
+    console.log("Updated userList to : " + JSON.stringify(this.state.users))
   }
 
   drawerStateChanged(isOpen) {
@@ -52,8 +49,7 @@ class PhotoShare extends React.Component {
   }
 
   getUser(id) {
-    console.log ("User list : ")
-    console.log(this.state.users)
+    console.log ("User list : " + JSON.stringify(this.state.users))
     return this.state.users.find((user) => user._id === id);
   }
 
@@ -110,7 +106,7 @@ class PhotoShare extends React.Component {
       destination === "PHOTOS"
         ? location.replace("users", "photos")
         : location.replace("photos", "users");
-    console.log("NEW LOC : " + newLocation);
+    console.log("SWITCHED PAGE TO : " + newLocation);
     history.push(newLocation);
   }
 
@@ -176,7 +172,6 @@ class PhotoShare extends React.Component {
                   path="/photos/:userId"
                   render={(props) => {
                     let user = this.getUser(props.match.params.userId);
-                    console.log("HELLO :: " + props.location.pathname)
                     return (
                       <UserDetail
                         user={user}

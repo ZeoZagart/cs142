@@ -29,7 +29,6 @@ class UserList extends React.Component {
         </Link>
       );
     });
-    console.log(userViews);
     return <List>{userViews}</List>;
   }
 
