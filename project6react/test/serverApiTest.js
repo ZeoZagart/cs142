@@ -17,14 +17,14 @@ var port = 3000;
 var host = 'localhost';
 
 // Valid properties of a user list model
-var userListProperties = ['first_name', 'last_name', '_id'];
+var userListProperties = ['first_name', 'last_name', '_id', 'location', 'occupation', 'description'];
 // Valid properties of a user detail model
 var userDetailProperties = ['first_name', 'last_name', '_id',
     'location', 'description', 'occupation'];
 // Valid properties of the photo model
 var photoProperties = ['file_name', 'date_time', 'user_id', '_id'];
 // Valid comments properties
-var commentProperties = ['comment', 'date_time', '_id', 'user'];
+var commentProperties = ['comment', 'date_time', 'user_id', '_id'];
 
 function assertEqualDates(d1, d2) {
     assert(new Date(d1).valueOf() === new Date(d2).valueOf());
@@ -92,7 +92,10 @@ describe('CS142 Photo App API - ', function () {
             async.each(cs142Users, function (realUser, callback) {
                 var user = _.find(userList, {
                     first_name: realUser.first_name,
-                    last_name: realUser.last_name
+                    last_name: realUser.last_name,
+                    location: realUser.location,
+                    description: realUser.description,
+                    occupation: realUser.occupation,
                 });
                 assert(user, 'could not find user ' + realUser.first_name + ' ' + realUser.last_name);
                 assert.strictEqual(_.countBy(userList, '_id')[user._id], 1, 'Multiple users with id:' + user._id);
@@ -261,11 +264,6 @@ describe('CS142 Photo App API - ', function () {
                                     var extraProps2 = _.difference(Object.keys(removeMongoProperties(comment)), commentProperties);
                                     assert.strictEqual(extraProps2.length, 0, 'comment object has extra properties: ' + extraProps2);
                                     assertEqualDates(comment.date_time, real_comment.date_time);
-
-                                    var extraProps3 = _.difference(Object.keys(removeMongoProperties(comment.user)), userListProperties);
-                                    assert.strictEqual(extraProps3.length, 0, 'comment user object has extra properties: ' + extraProps3);
-                                    assert.strictEqual(comment.user.first_name, real_comment.user.first_name);
-                                    assert.strictEqual(comment.user.last_name, real_comment.user.last_name);
                                 });
                             } else {
                                 assert(!photo.comments || (photo.comments.length === 0));

@@ -45,9 +45,6 @@ var express = require('express');
 const { query } = require('express');
 var app = express();
 
-// XXX - Your submission should work without this line. Comment out or delete this line for tests and before submission!
-// var cs142models = require('./modelData/photoApp.js').cs142models;
-
 mongoose.connect('mongodb://localhost/cs142project6', { useNewUrlParser: true, useUnifiedTopology: true });
 var canUseDB = false
 mongoose.connection.on('open', () => {canUseDB = true})
@@ -130,17 +127,25 @@ app.get('/test/:p1', function (request, response) {
     }
 });
 
+function minify(obj) {
+    let jsObj = JSON.parse(JSON.stringify(obj))
+    delete jsObj.__v
+    if (Array.isArray(jsObj)) {
+        jsObj.forEach(it => {delete it.__v})
+    }
+    return jsObj
+} 
 function find(response, err, res) {
     if (err) {
         console.log ("Error processing request: ");
-        console.log(request);
+        console.log(err);
+        response.status(400).send(err)
     } 
-    else { response.status(200).send(res); }
+    else { response.status(200).send(minify(res)); }
 }
-
 /*
  * URL /user/list - Return all the User object.
- */ 
+ */
 app.get('/user/list', function (request, response) {
     let res = User.find({},(err, res) => find(response, err, res));
 });
