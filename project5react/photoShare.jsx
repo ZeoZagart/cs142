@@ -8,7 +8,6 @@ import "./styles/main.css";
 import TopBar from "./components/topBar/TopBar";
 import UserDetail from "./components/userDetail/UserDetail";
 import UserList from "./components/userList/UserList";
-import UserPhotos from "./components/userPhotos/UserPhotos";
 import * as fetcher from "./WebFetcher.js";
 
 class PhotoShare extends React.Component {
@@ -103,7 +102,6 @@ class PhotoShare extends React.Component {
   }
 
   switchUserPageTo(destination, location, history) {
-    let userId = this.getUserId(location);
     let userPage = this.getUserPage(location);
     if (userPage === "NOT_SHOWN") return;
     let newLocation =

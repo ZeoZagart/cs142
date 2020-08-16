@@ -1,7 +1,5 @@
 **/node_modules
 **/.idea
-*.js
-!webpack.config.js
 *.zip
 **/SampleServer
 *.md
@@ -10,8 +8,8 @@
 *.xml
 *.iml
 package-lock.json
-!cs142-test-project2.js
-!run-tests-using-node.js
-!bundle.js
 _config.yml
 README.md
+*bundle*
+**/Project 2/*.js
+**/jsfiles
