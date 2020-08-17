@@ -1,5 +1,17 @@
 import React from "react";
-import { Paper, TextField, Typography, Button } from "@material-ui/core";
+import {
+	Paper,
+	TextField,
+	Typography,
+	Button,
+	FormControl,
+	InputLabel,
+	FilledInput,
+	InputAdornment,
+	IconButton,
+	Grid,
+} from "@material-ui/core";
+import { VisibilityOff, Visibility } from "@material-ui/icons";
 import { withStyles } from "@material-ui/core/styles";
 
 class Login extends React.Component {
@@ -16,9 +28,7 @@ class Login extends React.Component {
 		this.handleMouseDownPassword = this.handleMouseDownPassword.bind(this);
 	}
 
-	submit() {
-		
-	}
+	submit() {}
 
 	handlePasswordChange(event) {
 		this.setState({
@@ -28,29 +38,30 @@ class Login extends React.Component {
 
 	handleClickShowPassword() {
 		this.setState({
-			showPassword: !showPassword,
+			showPassword: !this.state.showPassword,
 		});
 	}
 
 	handleMouseDownPassword(event) {
 		// event.preventDefault();
-    }
+	}
 
 	getPasswordButton() {
-		let values = this.state
+		const { classes } = this.props;
+		let visibilityIcon = <Visibility />;
+		if (this.state.showPassword) {
+			visibilityIcon = <VisibilityOff />;
+		}
 		return (
-			<FormControl
-				className={clsx(classes.margin, classes.textField)}
-				variant="filled"
-			>
+			<FormControl variant="filled" className={classes.password}>
 				<InputLabel htmlFor="filled-adornment-password">
 					Password
 				</InputLabel>
-                <FilledInput
+				<FilledInput
 					required
 					id="filled-adornment-password"
-					type={values.showPassword ? "text" : "password"}
-					value={values.password}
+					type={this.state.showPassword ? "text" : "password"}
+					value={this.state.password}
 					onChange={this.handlePasswordChange}
 					endAdornment={
 						<InputAdornment position="end">
@@ -60,11 +71,7 @@ class Login extends React.Component {
 								onMouseDown={this.handleMouseDownPassword}
 								edge="end"
 							>
-								{values.showPassword ? (
-									<Visibility />
-								) : (
-									<VisibilityOff />
-								)}
+								{visibilityIcon}
 							</IconButton>
 						</InputAdornment>
 					}
@@ -86,28 +93,58 @@ class Login extends React.Component {
 	render() {
 		const { classes } = this.props;
 		return (
-			<Paper className={classes.root}>
-				<TextField required label="Username" />
-				{this.getPasswordButton()}
-				<Button variant="contained" className={classes.loginButton} onClick={this.submit}>
-					Login
-				</Button>
+			<Paper className={classes.paper}>
+				<Grid container direction="column" className={classes.grid}>
+					<TextField
+						required
+						variant="filled"
+						label="Username"
+						className={classes.username}
+					/>
+					{this.getPasswordButton()}
+					<Button
+						variant="contained"
+						className={classes.loginButton}
+						onClick={this.submit}
+					>
+						Login
+					</Button>
+				</Grid>
 			</Paper>
 		);
 	}
 }
 
 const styles = (theme) => ({
-	root: {
-		alignSelf: "center",
+	paper: {
+		margin: "auto",
+		borderRadius: "2rem",
+		width: "30rem",
+	},
+	grid: {
+		alignContent: "center",
 		alignItems: "center",
-		borderRadius: "5rem",
+		padding: "5rem",
+	},
+	username: {
+		width: "20rem",
+		marginBottom: "1rem",
+	},
+	password: {
+		width: "20rem",
+		marginBottom: "1rem",
 	},
 	incorrectInfo: {
 		color: "red",
 	},
 	loginButton: {
-		color="secondary",
+		width: "5rem",
+		color: "white",
+		backgroundColor: "#f50057",
+		marginBottom: "1rem",
+		"&:hover": {
+			backgroundColor: "#e50045",
+		},
 	},
 });
 
