@@ -25,6 +25,7 @@ var cs142models = require("./modelData/photoApp.js").cs142models;
 // We use the Mongoose to define the schema stored in MongoDB.
 var mongoose = require("mongoose");
 mongoose.Promise = require("bluebird");
+var crypto = require("crypto");
 
 mongoose.connect("mongodb://localhost/cs142project6", {
 	useNewUrlParser: true,
@@ -54,14 +55,24 @@ Promise.all(removePromises)
 		var userModels = cs142models.userListModel();
 		var mapFakeId2RealId = {}; // Map from fake id to real Mongo _id
 		var userPromises = userModels.map(function (user) {
+			let randomSalt = crypto.randomBytes(128).toString("utf-8");
+			let pass = "easy";
+			let encrypted = crypto
+				.createHash("sha256")
+				.update(pass + randomSalt)
+				.digest("hex");
+			console.log(
+				"Salt : " + randomSalt + " encrypted pass : " + encrypted
+			);
 			return User.create({
 				first_name: user.first_name,
 				last_name: user.last_name,
 				location: user.location,
 				description: user.description,
 				occupation: user.occupation,
-				login_name: user.last_name.toLowerCase(),
-				password: "weak",
+				username: user.last_name.toLowerCase(),
+				password: encrypted,
+				salt: randomSalt,
 			})
 				.then(function (userObj) {
 					// Set the unique ID of the object. We use the MongoDB generated _id for now

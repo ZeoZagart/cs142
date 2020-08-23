@@ -182,7 +182,7 @@ class UserDetail extends React.Component {
 								{name}
 							</Typography>
 							<Grid container>
-								{isPhotos === false ? (
+								{!isPhotos ? (
 									<Typography
 										variant="body1"
 										className={classes.userName}

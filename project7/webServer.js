@@ -31,32 +31,41 @@
  *
  */
 
-var mongoose = require('mongoose');
-mongoose.Promise = require('bluebird');
+var mongoose = require("mongoose");
+mongoose.Promise = require("bluebird");
 
-var async = require('async');
+var async = require("async");
+var bodyParser = require("body-parser");
+var crypto = require("crypto");
 
 // Load the Mongoose schema for User, Photo, and SchemaInfo
-var User = require('./schema/user.js');
-var Photo = require('./schema/photo.js');
-var SchemaInfo = require('./schema/schemaInfo.js');
+var User = require("./schema/user.js");
+var Photo = require("./schema/photo.js");
+var SchemaInfo = require("./schema/schemaInfo.js");
 
-var express = require('express');
-const { query } = require('express');
+var express = require("express");
+const { query, request, response } = require("express");
+const { isNull, isNullOrUndefined } = require("util");
 var app = express();
 
-mongoose.connect('mongodb://localhost/cs142project6', { useNewUrlParser: true, useUnifiedTopology: true });
-var canUseDB = false
-mongoose.connection.on('open', () => {canUseDB = true})
-mongoose.connection.on('error', () => {canUseDB = false})
+mongoose.connect("mongodb://localhost/cs142project6", {
+	useNewUrlParser: true,
+	useUnifiedTopology: true,
+});
+var canUseDB = false;
+mongoose.connection.on("open", () => {
+	canUseDB = true;
+});
+mongoose.connection.on("error", () => {
+	canUseDB = false;
+});
 
 // We have the express static module (http://expressjs.com/en/starter/static-files.html) do all
 // the work for us.
 app.use(express.static(__dirname));
 
-
-app.get('/', function (request, response) {
-    response.send('Simple web server of files from ' + __dirname);
+app.get("/", function (request, response) {
+	response.send("Simple web server of files from " + __dirname);
 });
 
 /*
@@ -67,108 +76,149 @@ app.get('/', function (request, response) {
  *                       is good for testing connectivity with  MongoDB.
  * /test/counts - Return an object with the counts of the different collections in JSON format
  */
-app.get('/test/:p1', function (request, response) {
-    // Express parses the ":p1" from the URL and returns it in the request.params objects.
-    console.log('/test called with param1 = ', request.params.p1);
+app.get("/test/:p1", function (request, response) {
+	// Express parses the ":p1" from the URL and returns it in the request.params objects.
+	console.log("/test called with param1 = ", request.params.p1);
 
-    var param = request.params.p1 || 'info';
+	var param = request.params.p1 || "info";
 
-    if (param === 'info') {
-        // Fetch the SchemaInfo. There should only one of them. The query of {} will match it.
-        SchemaInfo.find({}, function (err, info) {
-            if (err) {
-                // Query returned an error.  We pass it back to the browser with an Internal Service
-                // Error (500) error code.
-                console.error('Doing /user/info error:', err);
-                response.status(500).send(JSON.stringify(err));
-                return;
-            }
-            if (info.length === 0) {
-                // Query didn't return an error but didn't find the SchemaInfo object - This
-                // is also an internal error return.
-                response.status(500).send('Missing SchemaInfo');
-                return;
-            }
+	if (param === "info") {
+		// Fetch the SchemaInfo. There should only one of them. The query of {} will match it.
+		SchemaInfo.find({}, function (err, info) {
+			if (err) {
+				// Query returned an error.  We pass it back to the browser with an Internal Service
+				// Error (500) error code.
+				console.error("Doing /user/info error:", err);
+				response.status(500).send(JSON.stringify(err));
+				return;
+			}
+			if (info.length === 0) {
+				// Query didn't return an error but didn't find the SchemaInfo object - This
+				// is also an internal error return.
+				response.status(500).send("Missing SchemaInfo");
+				return;
+			}
 
-            // We got the object - return it in JSON format.
-            console.log('SchemaInfo', info[0]);
-            response.end(JSON.stringify(info[0]));
-        });
-    } else if (param === 'counts') {
-        // In order to return the counts of all the collections we need to do an async
-        // call to each collections. That is tricky to do so we use the async package
-        // do the work.  We put the collections into array and use async.each to
-        // do each .count() query.
-        var collections = [
-            {name: 'user', collection: User},
-            {name: 'photo', collection: Photo},
-            {name: 'schemaInfo', collection: SchemaInfo}
-        ];
-        async.each(collections, function (col, done_callback) {
-            col.collection.countDocuments({}, function (err, count) {
-                col.count = count;
-                done_callback(err);
-            });
-        }, function (err) {
-            if (err) {
-                response.status(500).send(JSON.stringify(err));
-            } else {
-                var obj = {};
-                for (var i = 0; i < collections.length; i++) {
-                    obj[collections[i].name] = collections[i].count;
-                }
-                response.end(JSON.stringify(obj));
-
-            }
-        });
-    } else {
-        // If we know understand the parameter we return a (Bad Parameter) (400) status.
-        response.status(400).send('Bad param ' + param);
-    }
+			// We got the object - return it in JSON format.
+			console.log("SchemaInfo", info[0]);
+			response.end(JSON.stringify(info[0]));
+		});
+	} else if (param === "counts") {
+		// In order to return the counts of all the collections we need to do an async
+		// call to each collections. That is tricky to do so we use the async package
+		// do the work.  We put the collections into array and use async.each to
+		// do each .count() query.
+		var collections = [
+			{ name: "user", collection: User },
+			{ name: "photo", collection: Photo },
+			{ name: "schemaInfo", collection: SchemaInfo },
+		];
+		async.each(
+			collections,
+			function (col, done_callback) {
+				col.collection.countDocuments({}, function (err, count) {
+					col.count = count;
+					done_callback(err);
+				});
+			},
+			function (err) {
+				if (err) {
+					response.status(500).send(JSON.stringify(err));
+				} else {
+					var obj = {};
+					for (var i = 0; i < collections.length; i++) {
+						obj[collections[i].name] = collections[i].count;
+					}
+					response.end(JSON.stringify(obj));
+				}
+			}
+		);
+	} else {
+		// If we know understand the parameter we return a (Bad Parameter) (400) status.
+		response.status(400).send("Bad param " + param);
+	}
 });
 
+var jsonParser = bodyParser.json();
+app.use(jsonParser);
+
 function minify(obj) {
-    let jsObj = JSON.parse(JSON.stringify(obj))
-    delete jsObj.__v
-    if (Array.isArray(jsObj)) {
-        jsObj.forEach(it => {delete it.__v})
-    }
-    return jsObj
-} 
+	console.log("Minifying obj : " + obj);
+	let jsObj = JSON.parse(JSON.stringify(obj));
+	delete jsObj.__v;
+	if (Array.isArray(jsObj)) {
+		jsObj.forEach((it) => {
+			delete it.__v;
+		});
+	}
+	return jsObj;
+}
+
 function find(response, err, res) {
-    if (err) {
-        console.log ("Error processing request: ");
-        console.log(err);
-        response.status(400).send(err)
-    } 
-    else { response.status(200).send(minify(res)); }
+	if (err) {
+		console.log("Error processing request: ");
+		console.log(err);
+		response.status(400).send(err);
+	} else {
+		try {
+			response.status(200).send(minify(res()));
+		} catch (err) {
+			console.log(`Error finding object: ${JSON.stringify(err)}`);
+			response.status(403).send("Incorrect password/username");
+		}
+	}
 }
 /*
  * URL /user/list - Return all the User object.
  */
-app.get('/user/list', function (request, response) {
-    let res = User.find({},(err, res) => find(response, err, res));
+app.get("/user/list", function (request, response) {
+	let res = User.find({}, (err, res) => find(response, err, () => res));
 });
 
 /*
  * URL /user/:id - Return the information for User (id)
  */
-app.get('/user/:id', function (request, response) {
-    let id = request.params.id;
-    let user = User.findById(id, (err, res) => find(response, err, res));
+app.get("/user/:id", function (request, response) {
+	let id = request.params.id;
+	User.findById(id, (err, res) => find(response, err, () => res));
+});
+
+app.post("/login", (request, response) => {
+	let username = request.body.username;
+	let password = request.body.password;
+	User.find({ username: username }, (err, res) => {
+		find(response, err, () => {
+			console.log("Found user : ");
+			console.log(res);
+			let user = res[0];
+			let salt = user.salt;
+			let encrypted = crypto
+				.createHash("sha256")
+				.update(password + salt)
+				.digest("hex");
+			if (encrypted === user.password) {
+				return user;
+			} else {
+				return null;
+			}
+		});
+	}).limit(1);
 });
 
 /*
  * URL /photosOfUser/:id - Return the Photos for User (id)
  */
-app.get('/photosOfUser/:id', function (request, response) {
-    let id = request.params.id;
-    let photos = Photo.find({user_id: id}, (err, res) => find(response, err, res))
+app.get("/photosOfUser/:id", function (request, response) {
+	let id = request.params.id;
+	Photo.find({ user_id: id }, (err, res) => find(response, err, () => res));
 });
 
 var server = app.listen(3000, function () {
-    var port = server.address().port;
-    console.log('Listening at http://localhost:' + port + ' exporting the directory ' + __dirname);
+	var port = server.address().port;
+	console.log(
+		"Listening at http://localhost:" +
+			port +
+			" exporting the directory " +
+			__dirname
+	);
 });
-
-

@@ -13,6 +13,8 @@ import {
 } from "@material-ui/core";
 import { VisibilityOff, Visibility } from "@material-ui/icons";
 import { withStyles } from "@material-ui/core/styles";
+import { fetchUserSalt, login } from "../../WebFetcher.js";
+const crypto = require("crypto");
 
 class Login extends React.Component {
 	constructor(props) {
@@ -24,11 +26,45 @@ class Login extends React.Component {
 			incorrectUsernameOrPassword: false,
 		};
 		this.handlePasswordChange = this.handlePasswordChange.bind(this);
+		this.handleUsernameChange = this.handleUsernameChange.bind(this);
 		this.handleClickShowPassword = this.handleClickShowPassword.bind(this);
 		this.handleMouseDownPassword = this.handleMouseDownPassword.bind(this);
+		this.submit = this.submit.bind(this);
 	}
 
-	submit() {}
+	submit(event) {
+		let username = this.state.username;
+		let password = this.state.password;
+		login(username, password)
+			.then((user) => {
+				this.setIncorrectUsernameOrPassword(false);
+				console.log("Logged in successfully");
+			})
+			.catch((err) => {
+				if (err.response) {
+					this.logLoginError(username, err.response);
+					this.setIncorrectUsernameOrPassword(true);
+				} else {
+					this.logLoginError(username, err);
+				}
+			});
+	}
+
+	logLoginError(username, err) {
+		console.log(`Failed to log-in user ${username}: ${err}`);
+	}
+
+	setIncorrectUsernameOrPassword(value) {
+		this.setState({
+			incorrectUsernameOrPassword: value,
+		});
+	}
+
+	handleUsernameChange(event) {
+		this.setState({
+			username: event.target.value,
+		});
+	}
 
 	handlePasswordChange(event) {
 		this.setState({
@@ -82,9 +118,9 @@ class Login extends React.Component {
 	}
 
 	showIncorrectUsernameOrPassword() {
-		const { classses } = this.props;
+		const { classes } = this.props;
 		return (
-			<Typography className={classes.incorrectInfo}>
+			<Typography className={classes.incorrectInfo} color={"red"}>
 				* Incorrect Username or Password
 			</Typography>
 		);
@@ -95,11 +131,15 @@ class Login extends React.Component {
 		return (
 			<Paper className={classes.paper}>
 				<Grid container direction="column" className={classes.grid}>
+					{this.state.incorrectUsernameOrPassword &&
+						this.showIncorrectUsernameOrPassword()}
 					<TextField
 						required
+						error={this.state.incorrectUsernameOrPassword}
 						variant="filled"
 						label="Username"
 						className={classes.username}
+						onChange={this.handleUsernameChange}
 					/>
 					{this.getPasswordButton()}
 					<Button
