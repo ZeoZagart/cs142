@@ -158,14 +158,7 @@ const tokenVerifier = function (req, res, next) {
 				);
 				res.status(401).send("Unauthorized, access token not found");
 			} else {
-				if (value) {
-					next();
-				} else {
-					console.log(`auth header ${auth} un-verified: ${value}`);
-					res.status(401).send(
-						"Unauthorized, access token not found"
-					);
-				}
+				next();
 			}
 		});
 	}
