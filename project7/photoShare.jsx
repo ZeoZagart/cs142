@@ -236,7 +236,7 @@ class PhotoShare extends React.Component {
 										let user = this.getUser(
 											props.match.params.userId
 										);
-										if (!this.isLoggedIn) {
+										if (!this.isLoggedIn()) {
 											this.onNotLoggedIn(history);
 											return <React.Fragment />;
 										}

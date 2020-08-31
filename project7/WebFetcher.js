@@ -7,8 +7,6 @@ const api = axios.create({
 });
 
 const AUTH_HEADER = "AUTH-SESSION-TOKEN";
-const CONTENT_TYPE = "content-type";
-const JSON_CONTENT_TYPE = "application/json";
 const IS_LOGGED_IN = "is-logged-in";
 var header = () => ({
 	headers: {
