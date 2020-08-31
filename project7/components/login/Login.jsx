@@ -13,7 +13,7 @@ import {
 } from "@material-ui/core";
 import { VisibilityOff, Visibility } from "@material-ui/icons";
 import { withStyles } from "@material-ui/core/styles";
-import { fetchUserSalt, login } from "../../WebFetcher.js";
+import { login } from "../../WebFetcher.js";
 const crypto = require("crypto");
 
 class Login extends React.Component {

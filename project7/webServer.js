@@ -37,27 +37,26 @@ mongoose.Promise = require("bluebird");
 var async = require("async");
 var bodyParser = require("body-parser");
 var crypto = require("crypto");
-
+var redis = require("redis");
+var redisClient = redis.createClient();
 // Load the Mongoose schema for User, Photo, and SchemaInfo
 var User = require("./schema/user.js");
 var Photo = require("./schema/photo.js");
 var SchemaInfo = require("./schema/schemaInfo.js");
 
 var express = require("express");
-const { query, request, response } = require("express");
-const { isNull, isNullOrUndefined } = require("util");
+const { request, response } = require("express");
 var app = express();
 
 mongoose.connect("mongodb://localhost/cs142project6", {
 	useNewUrlParser: true,
 	useUnifiedTopology: true,
 });
-var canUseDB = false;
 mongoose.connection.on("open", () => {
-	canUseDB = true;
+	console.log("Mongoose connection opened");
 });
 mongoose.connection.on("error", () => {
-	canUseDB = false;
+	console.log("Mongoose connection closed");
 });
 
 // We have the express static module (http://expressjs.com/en/starter/static-files.html) do all
@@ -142,8 +141,39 @@ app.get("/test/:p1", function (request, response) {
 var jsonParser = bodyParser.json();
 app.use(jsonParser);
 
+const AUTH_HEADER = "AUTH-SESSION-TOKEN";
+// request verification middleware
+const tokenVerifier = function (req, res, next) {
+	if (req.originalUrl.includes("login")) {
+		console.log("Log-in request, no token needed");
+		next();
+	} else {
+		console.log("Url : " + req.originalUrl);
+		var auth = req.get(AUTH_HEADER);
+		console.log("Auth header: " + auth + " content type : ");
+		redisClient.get(auth, (err, value) => {
+			if (err) {
+				console.log(
+					`auth ${auth} not found for url: ${req.baseUrl}, req: ${req} : ${err}`
+				);
+				res.status(401).send("Unauthorized, access token not found");
+			} else {
+				if (value) {
+					next();
+				} else {
+					console.log(`auth header ${auth} un-verified: ${value}`);
+					res.status(401).send(
+						"Unauthorized, access token not found"
+					);
+				}
+			}
+		});
+	}
+};
+app.use(tokenVerifier);
+
 function minify(obj) {
-	console.log("Minifying obj : " + obj);
+	// console.log("Minifying obj : " + obj);
 	let jsObj = JSON.parse(JSON.stringify(obj));
 	delete jsObj.__v;
 	if (Array.isArray(jsObj)) {
@@ -190,13 +220,18 @@ app.post("/login", (request, response) => {
 		find(response, err, () => {
 			console.log("Found user : ");
 			console.log(res);
-			let user = res[0];
+			let user = minify(res[0]);
 			let salt = user.salt;
 			let encrypted = crypto
 				.createHash("sha256")
 				.update(password + salt)
 				.digest("hex");
 			if (encrypted === user.password) {
+				redisClient.set(encrypted, "1", (err, value) => {
+					if (err) console.log("Error storing token in redis");
+					else console.log(`Stored token in redis ${value}`);
+				});
+				user.sessionToken = encrypted;
 				return user;
 			} else {
 				return null;

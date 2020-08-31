@@ -11,19 +11,31 @@ import UserList from "./components/userList/UserList";
 import * as fetcher from "./WebFetcher.js";
 import Login from "./components/login/Login";
 
+const IS_LOGGED_IN = "is-logged-in";
+
 class PhotoShare extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
 			users: [],
 			drawerStateOpen: false,
+			isLoggedIn: localStorage.getItem(IS_LOGGED_IN),
 		};
 		this.drawerStateChanged = this.drawerStateChanged.bind(this);
 		this.getUserDetailsViewType = this.getUserDetailsViewType.bind(this);
 		this.setUserList = this.setUserList.bind(this);
 	}
 
+	isLoggedIn() {
+		return localStorage.getItem(IS_LOGGED_IN) === "true";
+	}
+
+	onNotLoggedIn(history) {
+		history.push("/login");
+	}
+
 	componentDidMount() {
+		if (!this.isLoggedIn) return;
 		fetcher
 			.fetchUserList(this.setUserList)
 			.then((resp) => {
@@ -138,25 +150,31 @@ class PhotoShare extends React.Component {
 				<div>
 					<Grid container spacing={8} direction="column">
 						<Grid item>
-							<TopBar
-								pageName={this.getPageName(location.pathname)}
-								drawerStateChangedTo={this.drawerStateChanged}
-								userSelectorShown={() =>
-									this.getUserPage(location.pathname)
-								}
-								onPageChange={(destination) =>
-									this.switchUserPageTo(
-										destination,
-										location.pathname,
-										history
-									)
-								}
-							>
-								<UserList
-									users={this.state.users}
-									viewType={this.getUserDetailsViewType()}
-								/>
-							</TopBar>
+							{this.isLoggedIn() && (
+								<TopBar
+									pageName={this.getPageName(
+										location.pathname
+									)}
+									drawerStateChangedTo={
+										this.drawerStateChanged
+									}
+									userSelectorShown={() =>
+										this.getUserPage(location.pathname)
+									}
+									onPageChange={(destination) =>
+										this.switchUserPageTo(
+											destination,
+											location.pathname,
+											history
+										)
+									}
+								>
+									<UserList
+										users={this.state.users}
+										viewType={this.getUserDetailsViewType()}
+									/>
+								</TopBar>
+							)}
 						</Grid>
 						<div className="cs142-main-topbar-buffer" />
 						<Grid item style={{ marginLeft: dataMarginLeft }}>
@@ -196,6 +214,10 @@ class PhotoShare extends React.Component {
 										let user = this.getUser(
 											props.match.params.userId
 										);
+										if (!this.isLoggedIn()) {
+											this.onNotLoggedIn(history);
+											return <React.Fragment />;
+										}
 										return (
 											<UserDetail
 												user={user}
@@ -214,6 +236,10 @@ class PhotoShare extends React.Component {
 										let user = this.getUser(
 											props.match.params.userId
 										);
+										if (!this.isLoggedIn) {
+											this.onNotLoggedIn(history);
+											return <React.Fragment />;
+										}
 										return (
 											<UserDetail
 												user={user}
