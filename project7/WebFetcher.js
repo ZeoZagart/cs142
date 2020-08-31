@@ -14,6 +14,11 @@ var header = () => ({
 	},
 });
 
+export function logout() {
+	localStorage.setItem(IS_LOGGED_IN, false);
+	localStorage.removeItem(AUTH_HEADER);
+}
+
 function getToken() {
 	return localStorage.getItem(AUTH_HEADER);
 }
