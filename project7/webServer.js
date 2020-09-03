@@ -45,7 +45,7 @@ var Photo = require("./schema/photo.js");
 var SchemaInfo = require("./schema/schemaInfo.js");
 
 var express = require("express");
-const { request, response } = require("express");
+// const { request, response } = require("express");
 var app = express();
 
 mongoose.connect("mongodb://localhost/cs142project6", {
@@ -147,18 +147,26 @@ const tokenVerifier = function (req, res, next) {
 	if (req.originalUrl.includes("login")) {
 		console.log("Log-in request, no token needed");
 		next();
+	} else if (req.originalUrl.includes("logout")) {
+		console.log("Log-out request, token not needed in header");
+		next();
 	} else {
 		console.log("Url : " + req.originalUrl);
 		var auth = req.get(AUTH_HEADER);
-		console.log("Auth header: " + auth + " content type : ");
+		console.log("Auth header: " + auth + " content type : " + typeof auth);
+		console.log(auth);
 		redisClient.get(auth, (err, value) => {
-			if (err) {
+			console.log(`in redis get, found err: ${err}, value: ${value}`);
+			if (value) {
 				console.log(
-					`auth ${auth} not found for url: ${req.baseUrl}, req: ${req} : ${err}`
+					`Authorizing user : ${auth} for url: ${req.originalUrl}`
+				);
+				next();
+			} else {
+				console.log(
+					`auth ${auth} not found for url: ${req.originalUrl}, req: ${req} : ${err}`
 				);
 				res.status(401).send("Unauthorized, access token not found");
-			} else {
-				next();
 			}
 		});
 	}
@@ -195,7 +203,8 @@ function find(response, err, res) {
  * URL /user/list - Return all the User object.
  */
 app.get("/user/list", function (request, response) {
-	let res = User.find({}, (err, res) => find(response, err, () => res));
+	console.log("Returning user list");
+	User.find({}, (err, res) => find(response, err, () => res));
 });
 
 /*
@@ -231,6 +240,21 @@ app.post("/login", (request, response) => {
 			}
 		});
 	}).limit(1);
+});
+
+app.post("/logout", (request, response) => {
+	console.log("Logging out : " + JSON.stringify(request.body));
+	redisClient.del(request.body.token, (err, res) => {
+		if (err)
+			console.log(
+				`Error removing token :${request.body.token} from redis`
+			);
+		else
+			console.log(
+				`Successfully logged out: ${request.body.token} : ${res}`
+			);
+	});
+	response.status(200).send("Logged out successfully!");
 });
 
 /*

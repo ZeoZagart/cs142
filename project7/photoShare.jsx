@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { HashRouter, Route, Switch, withRouter } from "react-router-dom";
+import { HashRouter, Route, Switch, withRouter, Link } from "react-router-dom";
 import { Grid, Typography } from "@material-ui/core";
 import "./styles/main.css";
 
@@ -11,15 +11,13 @@ import UserList from "./components/userList/UserList";
 import * as fetcher from "./WebFetcher.js";
 import Login from "./components/login/Login";
 
-const IS_LOGGED_IN = "is-logged-in";
-
 class PhotoShare extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
 			users: [],
 			drawerStateOpen: false,
-			isLoggedIn: localStorage.getItem(IS_LOGGED_IN),
+			isLoggedIn: this.isLoggedIn(),
 		};
 		this.drawerStateChanged = this.drawerStateChanged.bind(this);
 		this.getUserDetailsViewType = this.getUserDetailsViewType.bind(this);
@@ -27,7 +25,7 @@ class PhotoShare extends React.Component {
 	}
 
 	isLoggedIn() {
-		return localStorage.getItem(IS_LOGGED_IN) === "true";
+		return fetcher.isLoggedIn();
 	}
 
 	onNotLoggedIn(history) {
@@ -139,10 +137,7 @@ class PhotoShare extends React.Component {
 	}
 
 	render() {
-		console.log(
-			"Render called for photoShare.jsx" +
-				JSON.stringify(this.state.users)
-		);
+		console.log("Render called for photoShare.jsx");
 		let dataMarginLeft = this.state.drawerStateOpen ? 500 : 150;
 		const { location, history } = this.props;
 		return (
@@ -150,7 +145,7 @@ class PhotoShare extends React.Component {
 				<div>
 					<Grid container spacing={8} direction="column">
 						<Grid item>
-							{this.isLoggedIn() && (
+							{
 								<TopBar
 									pageName={this.getPageName(
 										location.pathname
@@ -168,13 +163,14 @@ class PhotoShare extends React.Component {
 											history
 										)
 									}
+									onLogout={() => this.onNotLoggedIn(history)}
 								>
 									<UserList
 										users={this.state.users}
 										viewType={this.getUserDetailsViewType()}
 									/>
 								</TopBar>
-							)}
+							}
 						</Grid>
 						<div className="cs142-main-topbar-buffer" />
 						<Grid item style={{ marginLeft: dataMarginLeft }}>
@@ -211,12 +207,14 @@ class PhotoShare extends React.Component {
 								<Route
 									path="/users/:userId"
 									render={(props) => {
+										console.log(
+											"Route currently at users/:userid"
+										);
 										let user = this.getUser(
 											props.match.params.userId
 										);
 										if (!this.isLoggedIn()) {
-											this.onNotLoggedIn(history);
-											return <React.Fragment />;
+											return <Link to="/login" />;
 										}
 										return (
 											<UserDetail
@@ -237,8 +235,7 @@ class PhotoShare extends React.Component {
 											props.match.params.userId
 										);
 										if (!this.isLoggedIn()) {
-											this.onNotLoggedIn(history);
-											return <React.Fragment />;
+											return <Link to="/login" />;
 										}
 										return (
 											<UserDetail
@@ -254,14 +251,26 @@ class PhotoShare extends React.Component {
 								/>
 								<Route
 									path="/users"
+									render={() => {
+										if (!this.isLoggedIn()) {
+											return <Link to="/login" />;
+										}
+										return (
+											<UserList
+												users={this.state.users}
+												viewType={"avatarName"}
+											/>
+										);
+									}}
+								/>
+								<Route
+									path="/login"
 									render={() => (
-										<UserList
-											users={this.state.users}
-											viewType={"avatarName"}
+										<Login
+											onLogin={() => history.push("/")}
 										/>
 									)}
 								/>
-								<Route path="/login" render={() => <Login />} />
 							</Switch>
 						</Grid>
 					</Grid>

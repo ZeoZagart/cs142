@@ -15,8 +15,13 @@ var header = () => ({
 });
 
 export function logout() {
-	localStorage.setItem(IS_LOGGED_IN, false);
+	api.post("/logout", { token: getToken() });
 	localStorage.removeItem(AUTH_HEADER);
+	localStorage.setItem(IS_LOGGED_IN, false);
+}
+
+export function isLoggedIn() {
+	return localStorage.getItem(IS_LOGGED_IN) === "true";
 }
 
 function getToken() {
@@ -24,8 +29,8 @@ function getToken() {
 }
 
 function setToken(token) {
-	console.log("Setting session token to " + JSON.stringify(token));
-	localStorage.setItem(AUTH_HEADER, JSON.stringify(token));
+	console.log("Setting session token to " + token);
+	localStorage.setItem(AUTH_HEADER, token);
 	localStorage.setItem(IS_LOGGED_IN, "true");
 }
 

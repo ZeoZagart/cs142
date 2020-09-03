@@ -14,15 +14,7 @@ import {
 import { withStyles } from "@material-ui/core/styles";
 import MenuIcon from "@material-ui/icons/Menu";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
-import { logout } from "../../WebFetcher.js";
-
-function isLoggedIn() {
-	return localStorage.getItem(IS_LOGGED_IN) === "true";
-}
-
-function logoutAndRedirect() {
-	logout();
-}
+import { logout, isLoggedIn } from "../../WebFetcher.js";
 
 class TopBar extends React.Component {
 	constructor(props) {
@@ -32,6 +24,11 @@ class TopBar extends React.Component {
 		};
 		this.handleDrawerOpen = this.handleDrawerOpen.bind(this);
 		this.handleDrawerClose = this.handleDrawerClose.bind(this);
+	}
+
+	logoutAndRedirect() {
+		logout();
+		this.props.onLogout();
 	}
 
 	handleDrawerOpen(event) {
@@ -102,7 +99,7 @@ class TopBar extends React.Component {
 				<Button
 					className={classes.logout}
 					style={{ color: "secondary" }}
-					onClick={() => logoutAndRedirect()}
+					onClick={() => this.logoutAndRedirect()}
 				>
 					Logout
 				</Button>

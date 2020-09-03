@@ -38,6 +38,7 @@ class Login extends React.Component {
 		login(username, password)
 			.then((user) => {
 				this.setIncorrectUsernameOrPassword(false);
+				this.props.onLogin();
 				console.log("Logged in successfully");
 			})
 			.catch((err) => {
