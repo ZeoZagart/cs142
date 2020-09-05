@@ -23,6 +23,7 @@ class PhotoDialog extends React.Component {
 		super(props);
 		this.state = {
 			comments: this.props.photo.comments,
+			text: "",
 		};
 		this.setPost = this.setPost.bind(this);
 	}
@@ -76,9 +77,12 @@ class PhotoDialog extends React.Component {
 		});
 	}
 
-	post = "";
+	// post = "";
 	setPost(event) {
-		this.post = event.target.value;
+		this.setState({
+			text: event.target.value,
+		});
+		// this.post = event.target.value;
 	}
 
 	postComment() {
@@ -103,7 +107,10 @@ class PhotoDialog extends React.Component {
 		return (
 			<form className={classes.postComment}>
 				<Input
-					onChange={this.setPost}
+					value={this.state.text}
+					onChange={() => {
+						this.
+					}}
 					placeholder={"Your opinion?"}
 					className={classes.commentField}
 				/>
