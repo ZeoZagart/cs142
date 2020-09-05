@@ -95,11 +95,7 @@ class PhotoDialog extends React.Component {
 							imagesPath={imagesPath}
 						/>
 					</Grid>
-					<Grid
-						container
-						align="bottom"
-						className={classes.postComment}
-					>
+					<Grid container align="bottom">
 						{this.getCommentButton(openPhoto._id)}
 					</Grid>
 				</Grid>
@@ -152,13 +148,6 @@ const styles = (theme) => ({
 		margin: 0,
 		width: "100%",
 		height: "18rem",
-	},
-	postComment: {
-		display: "flex",
-		margin: 0,
-		padding: 0,
-		height: "2rem",
-		width: "100%",
 	},
 });
 

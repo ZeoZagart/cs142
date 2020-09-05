@@ -36,7 +36,7 @@ class PostCommment extends React.Component {
 	getCommentButton() {
 		let { classes } = this.props;
 		return (
-			<form>
+			<form className={classes.postComment}>
 				<Input
 					value={this.state.commentField}
 					onChange={(e) => {
@@ -67,6 +67,13 @@ class PostCommment extends React.Component {
 }
 
 const styles = (theme) => ({
+	postComment: {
+		display: "flex",
+		margin: 0,
+		padding: 0,
+		height: "2rem",
+		width: "100%",
+	},
 	commentField: {
 		paddingLeft: "10px",
 		paddingRight: "10px",
