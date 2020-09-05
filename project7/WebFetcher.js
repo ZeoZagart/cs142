@@ -24,6 +24,18 @@ export function isLoggedIn() {
 	return localStorage.getItem(IS_LOGGED_IN) === "true";
 }
 
+export function listenForComments(photoId) {
+	return api
+		.post("/getEventSourceLink/" + photoId, header())
+		.catch((err) => console.log(`Error connecting for comments ${err}`))
+		.then((link) => new EventSource(base + "/link"));
+}
+
+export function submitPost(comment, photoId) {
+	let data = { comment: comment, photo_id: photoId };
+	return api.post("/postComment", data, header());
+}
+
 function getToken() {
 	return localStorage.getItem(AUTH_HEADER);
 }

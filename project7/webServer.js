@@ -161,6 +161,7 @@ const tokenVerifier = function (req, res, next) {
 				console.log(
 					`Authorizing user : ${auth} for url: ${req.originalUrl}`
 				);
+				req.headers["user-id"] = value;
 				next();
 			} else {
 				console.log(
@@ -187,8 +188,7 @@ function minify(obj) {
 
 function find(response, err, res) {
 	if (err) {
-		console.log("Error processing request: ");
-		console.log(err);
+		console.log(`Error processing request: ${err}`);
 		response.status(400).send(err);
 	} else {
 		try {
@@ -199,6 +199,43 @@ function find(response, err, res) {
 		}
 	}
 }
+
+app.post("/postComment", function (request, response) {
+	let photoId = request.body.photo_id;
+	let comment_text = request.body.comment;
+	let date_time = Date.now();
+	let userId = request.headers["user-id"];
+	Photo.findById(photoId, (err, photo) => {
+		if (err) {
+			console.log(`Error processing request: ${err}`);
+			response.status(400).send(err);
+		} else {
+			try {
+				photo.comments = photo.comments.concat([
+					{
+						comment: comment_text,
+						date_time: date_time,
+						user_id: userId,
+					},
+				]);
+				console.log(
+					"Added comment: %s by user: %s to photo: %s",
+					comment_text,
+					userId,
+					photoId
+				);
+				photo.save();
+				response.status(200).send(minify(photo.comments));
+			} catch (error) {
+				console.log(
+					`Error saving comment for photo: ${photo} => ${error}`
+				);
+				response.status(400).send(error);
+			}
+		}
+	});
+});
+
 /*
  * URL /user/list - Return all the User object.
  */
@@ -229,7 +266,7 @@ app.post("/login", (request, response) => {
 				.update(password + salt)
 				.digest("hex");
 			if (encrypted === user.password) {
-				redisClient.set(encrypted, "1", (err, value) => {
+				redisClient.set(encrypted, user._id, (err, value) => {
 					if (err) console.log("Error storing token in redis");
 					else console.log(`Stored token in redis ${value}`);
 				});
