@@ -225,7 +225,9 @@ app.post("/postComment", function (request, response) {
 					photoId
 				);
 				photo.save();
-				response.status(200).send(minify(photo.comments));
+				response
+					.status(200)
+					.send(minify(photo.comments[photo.comments.length - 1]));
 			} catch (error) {
 				console.log(
 					`Error saving comment for photo: ${photo} => ${error}`

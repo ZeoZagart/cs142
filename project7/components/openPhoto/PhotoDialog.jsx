@@ -1,21 +1,10 @@
 import React from "react";
-import {
-	Grid,
-	CardMedia,
-	Dialog,
-	Button,
-	Link,
-	Input,
-} from "@material-ui/core";
+import { Grid, CardMedia, Dialog } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
 import CommentList from "../CommentList";
-import {
-	fetchUserById,
-	fetchUserPhotos,
-	isLoggedIn,
-	submitPost,
-} from "../../WebFetcher.js";
+import { fetchUserById, fetchUserPhotos } from "../../WebFetcher.js";
 import PropTypes from "prop-types";
+import PostComment from "../PostComment";
 
 class PhotoDialog extends React.Component {
 	commentEvents = null;
@@ -23,23 +12,21 @@ class PhotoDialog extends React.Component {
 		super(props);
 		this.state = {
 			comments: this.props.photo.comments,
-			text: "",
 		};
-		this.setPost = this.setPost.bind(this);
 	}
 
-	componentDidMount() {
-		// listenForComments(this.props.photo._id).then((source) => {
-		// 	this.commentEvents = source;
-		// 	source.addEventListener("commentAddedEvent", (event) => {
-		// 		console.log(
-		// 			`Received event: CommentAdded with value: ${event}`
-		// 		);
-		// 		comment = JSON.parse(event.data);
-		// 		this.addCommentToList(comment);
-		// 	});
-		// });
-	}
+	// componentDidMount() {
+	// listenForComments(this.props.photo._id).then((source) => {
+	// 	this.commentEvents = source;
+	// 	source.addEventListener("commentAddedEvent", (event) => {
+	// 		console.log(
+	// 			`Received event: CommentAdded with value: ${event}`
+	// 		);
+	// 		comment = JSON.parse(event.data);
+	// 		this.addCommentToList(comment);
+	// 	});
+	// });
+	// }
 
 	addCommentToList(comment) {
 		let commentList = this.state.comments;
@@ -49,16 +36,12 @@ class PhotoDialog extends React.Component {
 		});
 	}
 
-	componentWillUnmount() {
-		if (this.commentEvents) this.commentEvents.close();
-	}
+	// componentWillUnmount() {
+	// 	if (this.commentEvents) this.commentEvents.close();
+	// }
 
 	static contextTypes = {
 		router: PropTypes.object,
-	};
-
-	redirectToLogin = () => {
-		this.context.router.history.push(`/login`);
 	};
 
 	getUserPhoto = (userId) => fetchUserPhotos(userId)[0].file_name;
@@ -77,60 +60,13 @@ class PhotoDialog extends React.Component {
 		});
 	}
 
-	// post = "";
-	setPost(event) {
-		this.setState({
-			text: event.target.value,
-		});
-		// this.post = event.target.value;
-	}
-
-	postComment() {
-		submitPost(this.post, this.props.photo._id)
-			.then((response) => {
-				console.log(`Comment added successfully: ${response}`);
-				this.addCommentToList(response.data);
-			})
-			.catch((err) => {
-				if (err.response) {
-					console.log(
-						`Unable to comment => response: ${err.response}`
-					);
-				} else {
-					console.log(`Unable to comment => client issue: ${err}`);
-				}
-			});
-	}
-
-	getCommentButton() {
-		let { classes } = this.props;
+	getCommentButton(photoId) {
 		return (
-			<form className={classes.postComment}>
-				<Input
-					value={this.state.text}
-					onChange={() => {
-						this.
-					}}
-					placeholder={"Your opinion?"}
-					className={classes.commentField}
-				/>
-				<Button
-					variant="contained"
-					color="secondary"
-					className={classes.commentButton}
-					onClick={() => {
-						this.postComment();
-					}}
-				>
-					POST
-				</Button>
-			</form>
+			<PostComment
+				photoId={photoId}
+				addCommentToList={(data) => this.addCommentToList(data)}
+			/>
 		);
-	}
-
-	getCommentOrLoginButton() {
-		if (isLoggedIn()) return this.getCommentButton();
-		else return <Link to="/login" />;
 	}
 
 	getPhotoDialog(name, openPhoto) {
@@ -164,7 +100,7 @@ class PhotoDialog extends React.Component {
 						align="bottom"
 						className={classes.postComment}
 					>
-						{this.getCommentOrLoginButton()}
+						{this.getCommentButton(openPhoto._id)}
 					</Grid>
 				</Grid>
 			</Grid>
@@ -223,16 +159,6 @@ const styles = (theme) => ({
 		padding: 0,
 		height: "2rem",
 		width: "100%",
-	},
-	commentField: {
-		paddingLeft: "10px",
-		paddingRight: "10px",
-		width: "auto",
-		flexGrow: 1,
-		backgroundColor: "#FAFAFA",
-	},
-	commentButton: {
-		width: "2rem",
 	},
 });
 

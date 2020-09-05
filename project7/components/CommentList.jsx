@@ -10,6 +10,7 @@ class CommentList extends React.Component {
 	}
 
 	render() {
+		console.log("Comment list is being re-rendered");
 		let { classes } = this.props;
 		const photosBase = this.props.imagesPath;
 		const comments = this.props.comments.map((comment) => {
