@@ -129,25 +129,25 @@ const styles = (theme) => ({
 		margin: 0,
 		padding: 0,
 		width: "max-content",
-		height: "20rem",
+		height: "30rem",
 	},
 	openPhoto: {
 		margin: 0,
 		padding: 0,
-		width: "20rem",
-		height: "20rem",
+		width: "30rem",
+		height: "30rem",
 	},
 	commentsAndPost: {
 		margin: 0,
 		padding: 0,
-		height: "20rem",
-		width: "20rem",
+		height: "30rem",
+		width: "30rem",
 	},
 	photoComments: {
 		overflow: "auto",
 		margin: 0,
 		width: "100%",
-		height: "18rem",
+		height: "28rem",
 	},
 });
 
