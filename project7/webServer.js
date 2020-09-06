@@ -45,6 +45,7 @@ var Photo = require("./schema/photo.js");
 var SchemaInfo = require("./schema/schemaInfo.js");
 
 var express = require("express");
+const { response } = require("express");
 // const { request, response } = require("express");
 var app = express();
 
@@ -147,6 +148,9 @@ const tokenVerifier = function (req, res, next) {
 	if (req.originalUrl.includes("login")) {
 		console.log("Log-in request, no token needed");
 		next();
+	} else if (req.originalUrl.includes("streamComments")) {
+		console.log("Stream request, no token needed");
+		next();
 	} else if (req.originalUrl.includes("logout")) {
 		console.log("Log-out request, token not needed in header");
 		next();
@@ -200,6 +204,56 @@ function find(response, err, res) {
 	}
 }
 
+function sendCommentAddedEvent(comments, response) {
+	response.write("event: commentAddedEvent\n");
+	response.write(`data: ${JSON.stringify(comments)}`);
+	response.write("\n\n");
+}
+
+let commentListeners = new Map();
+app.get("/streamComments/:photo_id", function (request, response) {
+	let photoId = request.params.photo_id;
+
+	if (commentListeners.has("comment_" + photoId)) {
+		commentListeners.set(
+			"comment_" + photoId,
+			commentListeners.get("comment_" + photoId).push(response)
+		);
+	} else {
+		commentListeners.set("comment_" + photoId, [response]);
+	}
+	console.log("commentListeners set to : ");
+	console.log(commentListeners);
+	console.log(commentListeners.get("comment_" + photoId));
+
+	request.on("close", () => {
+		console.log(`deleting: ${response} for comment listening`);
+		commentListeners.set(
+			"comment_" + photoId,
+			commentListeners
+				.get("comment_" + photoId)
+				.filter((item) => item != response)
+		);
+		response.end();
+	});
+
+	response.writeHead(200, {
+		Connection: "keep-alive",
+		"Content-Type": "text/event-stream",
+		"Cache-Control": "no-cache",
+		"Access-Control-Allow-Origin": "*",
+	});
+
+	Photo.findById(photoId, (err, photo) => {
+		if (err) {
+			console.log(`Error processing request: ${err}`);
+			response.status(400).send(err);
+		} else {
+			sendCommentAddedEvent(photo.comments, response);
+		}
+	});
+});
+
 app.post("/postComment", function (request, response) {
 	let photoId = request.body.photo_id;
 	let comment_text = request.body.comment;
@@ -225,6 +279,13 @@ app.post("/postComment", function (request, response) {
 					photoId
 				);
 				photo.save();
+				if (commentListeners.has("comment_" + photoId)) {
+					commentListeners
+						.get("comment_" + photoId)
+						.forEach((resp) =>
+							sendCommentAddedEvent(photo.comments, resp)
+						);
+				}
 				response
 					.status(200)
 					.send(minify(photo.comments[photo.comments.length - 1]));

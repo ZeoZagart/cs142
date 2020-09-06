@@ -2,7 +2,11 @@ import React from "react";
 import { Grid, CardMedia, Dialog } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
 import CommentList from "../CommentList";
-import { fetchUserById, fetchUserPhotos } from "../../WebFetcher.js";
+import {
+	fetchUserById,
+	fetchUserPhotos,
+	listenForComments,
+} from "../../WebFetcher.js";
 import PropTypes from "prop-types";
 import PostComment from "../PostComment";
 
@@ -15,30 +19,20 @@ class PhotoDialog extends React.Component {
 		};
 	}
 
-	// componentDidMount() {
-	// listenForComments(this.props.photo._id).then((source) => {
-	// 	this.commentEvents = source;
-	// 	source.addEventListener("commentAddedEvent", (event) => {
-	// 		console.log(
-	// 			`Received event: CommentAdded with value: ${event}`
-	// 		);
-	// 		comment = JSON.parse(event.data);
-	// 		this.addCommentToList(comment);
-	// 	});
-	// });
-	// }
-
-	addCommentToList(comment) {
-		let commentList = this.state.comments;
-		commentList.push(comment);
-		this.setState({
-			comments: commentList,
+	componentDidMount() {
+		this.commentEvents = listenForComments(this.props.photo._id);
+		this.commentEvents.addEventListener("commentAddedEvent", (event) => {
+			console.log(`Received event: CommentAdded with value: ${event}`);
+			let commentList = JSON.parse(event.data);
+			this.setState({
+				comments: commentList,
+			});
 		});
 	}
 
-	// componentWillUnmount() {
-	// 	if (this.commentEvents) this.commentEvents.close();
-	// }
+	componentWillUnmount() {
+		if (this.commentEvents) this.commentEvents.close();
+	}
 
 	static contextTypes = {
 		router: PropTypes.object,
@@ -61,12 +55,7 @@ class PhotoDialog extends React.Component {
 	}
 
 	getCommentButton(photoId) {
-		return (
-			<PostComment
-				photoId={photoId}
-				addCommentToList={(data) => this.addCommentToList(data)}
-			/>
-		);
+		return <PostComment photoId={photoId} />;
 	}
 
 	getPhotoDialog(name, openPhoto) {

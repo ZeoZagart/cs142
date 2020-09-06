@@ -25,10 +25,11 @@ export function isLoggedIn() {
 }
 
 export function listenForComments(photoId) {
-	return api
-		.post("/getEventSourceLink/" + photoId, header())
-		.catch((err) => console.log(`Error connecting for comments ${err}`))
-		.then((link) => new EventSource(base + "/link"));
+	// return api
+	// .post("/getEventSourceLink/" + photoId, header())
+	// .catch((err) => console.log(`Error connecting for comments ${err}`))
+	// .then((link) => new EventSource(base + "/link"));
+	return new EventSource(base + "streamComments/" + photoId);
 }
 
 export function submitPost(comment, photoId) {

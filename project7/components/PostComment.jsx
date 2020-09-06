@@ -20,7 +20,6 @@ class PostCommment extends React.Component {
 		submitPost(this.state.commentField, this.props.photoId)
 			.then((response) => {
 				console.log(`Comment added successfully: ${response}`);
-				this.props.addCommentToList(response.data);
 			})
 			.catch((err) => {
 				if (err.response) {
