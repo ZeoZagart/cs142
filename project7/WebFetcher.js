@@ -37,6 +37,13 @@ export function submitPost(comment, photoId) {
 	return api.post("/postComment", data, header());
 }
 
+export function uploadPhoto(photo) {
+	return api
+		.post("/photos/new", photo, header())
+		.then((res) => console.log("Photo upload successfully" + res))
+		.catch((err) => console.log("Error uploading photo" + err));
+}
+
 function getToken() {
 	return localStorage.getItem(AUTH_HEADER);
 }

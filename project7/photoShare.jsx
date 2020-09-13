@@ -82,8 +82,12 @@ class PhotoShare extends React.Component {
 
 	getUserName(id) {
 		let user = this.getUser(id);
-		let name = user.first_name + " " + user.last_name;
-		return name;
+		if (user) {
+			let name = user.first_name + " " + user.last_name;
+			return name;
+		} else {
+			return "Login to see name...";
+		}
 	}
 
 	getPageName(location) {

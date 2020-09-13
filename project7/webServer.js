@@ -39,13 +39,18 @@ var bodyParser = require("body-parser");
 var crypto = require("crypto");
 var redis = require("redis");
 var redisClient = redis.createClient();
+
+var multer = require("multer");
+var processFormBody = multer({ storage: multer.memoryStorage() }).single(
+	"uploadedphoto"
+);
+var fs = require("fs");
 // Load the Mongoose schema for User, Photo, and SchemaInfo
 var User = require("./schema/user.js");
 var Photo = require("./schema/photo.js");
 var SchemaInfo = require("./schema/schemaInfo.js");
 
 var express = require("express");
-const { response } = require("express");
 // const { request, response } = require("express");
 var app = express();
 
@@ -355,6 +360,33 @@ app.post("/logout", (request, response) => {
 			);
 	});
 	response.status(200).send("Logged out successfully!");
+});
+
+app.post("/photos/new", (request, response) => {
+	let userId = request.headers["user-id"];
+	console.log("Received photo upload request from user:" + userId);
+	processFormBody(request, response, (err1) => {
+		if (err1 || !request.file) {
+			console.log(`Error getting photo: ${request.file} : ${err1}`);
+			response.status(405).send("Unable to add photo: " + err1);
+		} else {
+			let timestamp = new Date().valueOf();
+			let filename = "U" + String(timestamp) + request.file.originalname;
+			fs.writeFile(
+				"./images/" + filename,
+				request.file.buffer,
+				(err2) => {
+					console.log("Error saving file: " + err2);
+				}
+			);
+			Photo.create({
+				file_name: filename,
+				date_time: Date.now(),
+				user_id: userId,
+			});
+			response.status(200).send("Saved file successefully");
+		}
+	});
 });
 
 /*

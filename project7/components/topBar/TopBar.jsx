@@ -1,5 +1,6 @@
 import React from "react";
 import clsx from "clsx";
+import { Redirect } from "react-router-dom";
 import {
 	AppBar,
 	Toolbar,
@@ -15,20 +16,37 @@ import { withStyles } from "@material-ui/core/styles";
 import MenuIcon from "@material-ui/icons/Menu";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import { logout, isLoggedIn } from "../../WebFetcher.js";
+import UploadPhoto from "../UploadPhoto.jsx";
+import { disconnect } from "mongoose";
 
 class TopBar extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
+			linkToLogin: false,
 			open: false,
+			showingUploadPhoto: false,
 		};
 		this.handleDrawerOpen = this.handleDrawerOpen.bind(this);
 		this.handleDrawerClose = this.handleDrawerClose.bind(this);
 	}
 
+	showUploadPhotoDialog(newState) {
+		console.log(`Changing showing uploadPhotoDialog to: ${newState}`);
+		this.setState({
+			showingUploadPhoto: newState,
+		});
+	}
+
 	logoutAndRedirect() {
 		logout();
 		this.props.onLogout();
+	}
+
+	login() {
+		this.setState({
+			linkToLogin: true,
+		});
 	}
 
 	handleDrawerOpen(event) {
@@ -90,15 +108,37 @@ class TopBar extends React.Component {
 		}
 	}
 
+	getUploadPhotoButton() {
+		if (!isLoggedIn()) {
+			return <Redirect to="/login" />;
+		} else {
+			return (
+				<Button onClick={() => this.showUploadPhotoDialog(true)}>
+					Upload photo
+				</Button>
+			);
+		}
+	}
+
 	getLogoutButton() {
 		const { classes } = this.props;
 		if (!isLoggedIn()) {
-			return <React.Fragment />;
+			return (
+				<Button
+					className={classes.logout}
+					color="secondary"
+					variant="outlined"
+					onClick={() => this.login()}
+				>
+					Login
+				</Button>
+			);
 		} else {
 			return (
 				<Button
 					className={classes.logout}
-					style={{ color: "secondary" }}
+					color="secondary"
+					variant="outlined"
 					onClick={() => this.logoutAndRedirect()}
 				>
 					Logout
@@ -110,6 +150,9 @@ class TopBar extends React.Component {
 	render() {
 		const { classes } = this.props;
 		open = this.state.open;
+		if (this.state.linkToLogin) {
+			return <Redirect to="/login" />;
+		}
 		return (
 			<div className={classes.root}>
 				<CssBaseline />
@@ -135,6 +178,7 @@ class TopBar extends React.Component {
 						<Typography variant="h6" className={classes.pageTitle}>
 							{this.props.pageName}
 						</Typography>
+						{this.getUploadPhotoButton()}
 						{this.getLogoutButton()}
 						{this.getUserPageSelector()}
 					</Toolbar>
@@ -158,6 +202,11 @@ class TopBar extends React.Component {
 						</IconButton>
 					</div>
 					<Divider />
+					{this.state.showingUploadPhoto && (
+						<UploadPhoto
+							onClose={() => this.showUploadPhotoDialog(false)}
+						/>
+					)}
 					{this.props.children}
 				</Drawer>
 			</div>
