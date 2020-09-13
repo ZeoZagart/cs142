@@ -2,7 +2,7 @@ import React from "react";
 import { Paper, Grid, Typography, Avatar, CardMedia } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
 import PhotoDialog from "../openPhoto/PhotoDialog";
-import { fetchUserPhotos } from "../../WebFetcher.js";
+import { getPhoto } from "../../WebFetcher.js";
 
 class UserDetail extends React.Component {
 	constructor(props) {
@@ -93,15 +93,13 @@ class UserDetail extends React.Component {
 		return location.includes("photos");
 	}
 
-	getUserPhoto = (userId) => fetchUserPhotos(userId)[0].file_name;
-
 	completeProfile(user) {
 		let allPhotos = this.props.photos;
 		let isPhotos = this.isCurrentPagePhotos();
 		let name = user.first_name + " " + user.last_name;
 		let { classes } = this.props;
 		if (!user.photo) {
-			user.photo = this.getUserPhoto(user._id);
+			user.photo = getPhoto(user._id);
 		}
 		console.log("photos : " + allPhotos.map((photo) => photo.src));
 		return (

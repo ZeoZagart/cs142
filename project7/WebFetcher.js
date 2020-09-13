@@ -85,6 +85,16 @@ export function login(username, password) {
 	});
 }
 
+export function getPhoto(userId) {
+	let photosLoc = "../../images/";
+	let photos = fetchUserPhotos(userId);
+	if (photos && photos.length > 0) {
+		return photosLoc + photos[0].file_name;
+	} else {
+		return null;
+	}
+}
+
 export function registerUser(email, firnst_name, last_name, password) {
 	let url = base + "register";
 	let data = {

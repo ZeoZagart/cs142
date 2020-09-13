@@ -42,7 +42,12 @@ export default function Register() {
 				return errors;
 			}}
 			onSubmit={(values, { setSubmitting }) => {
-				registerUser(email, first_name, last_name, password)
+				registerUser(
+					values.email,
+					values.first_name,
+					values.last_name,
+					values.password
+				)
 					.then((user) => setRegistered(true))
 					.catch((err) => console.log(`Error registering: ${err}`));
 				setTimeout(() => {

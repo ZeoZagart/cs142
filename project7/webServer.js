@@ -153,6 +153,9 @@ const tokenVerifier = function (req, res, next) {
 	if (req.originalUrl.includes("login")) {
 		console.log("Log-in request, no token needed");
 		next();
+	} else if (req.originalUrl.includes("register")) {
+		console.log("Register user request, no token needed");
+		next();
 	} else if (req.originalUrl.includes("streamComments")) {
 		console.log("Stream request, no token needed");
 		next();
@@ -345,6 +348,32 @@ app.post("/login", (request, response) => {
 			}
 		});
 	}).limit(1);
+});
+
+app.post("/register", (request, response) => {
+	let data = request.body;
+	let randomSalt = crypto.randomBytes(128).toString("utf-8");
+	let encrypted = crypto
+		.createHash("sha256")
+		.update(data.password + randomSalt)
+		.digest("hex");
+	User.create({
+		first_name: data.first_name,
+		last_name: data.last_name,
+		location: data.location,
+		description: "Not a random nice guy",
+		occupation: "Minds your own business",
+		username: data.last_name.toLowerCase(),
+		password: encrypted,
+		salt: randomSalt,
+	})
+		.then(function (userObj) {
+			let minified = minify(userObj);
+			response.status(200).send(minified);
+		})
+		.catch((err) => {
+			response.status(405).send(`Error registering user: ${err}`);
+		});
 });
 
 app.post("/logout", (request, response) => {
