@@ -1,6 +1,13 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { HashRouter, Route, Switch, withRouter, Link } from "react-router-dom";
+import {
+	HashRouter,
+	Route,
+	Switch,
+	withRouter,
+	Link,
+	Redirect,
+} from "react-router-dom";
 import { Grid, Typography } from "@material-ui/core";
 import "./styles/main.css";
 
@@ -10,6 +17,7 @@ import UserDetail from "./components/userDetail/UserDetail";
 import UserList from "./components/userList/UserList";
 import * as fetcher from "./WebFetcher.js";
 import Login from "./components/login/Login";
+import Register from "./components/login/Register";
 
 class PhotoShare extends React.Component {
 	constructor(props) {
@@ -274,6 +282,14 @@ class PhotoShare extends React.Component {
 											onLogin={() => history.push("/")}
 										/>
 									)}
+								/>
+								<Route
+									path="/register"
+									render={() => <Register />}
+								/>
+								<Route
+									path="*"
+									render={() => <Redirect to="/login" />}
 								/>
 							</Switch>
 						</Grid>

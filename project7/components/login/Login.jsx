@@ -14,7 +14,6 @@ import {
 import { VisibilityOff, Visibility } from "@material-ui/icons";
 import { withStyles } from "@material-ui/core/styles";
 import { login } from "../../WebFetcher.js";
-const crypto = require("crypto");
 
 class Login extends React.Component {
 	constructor(props) {

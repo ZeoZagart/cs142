@@ -85,6 +85,22 @@ export function login(username, password) {
 	});
 }
 
+export function registerUser(email, firnst_name, last_name, password) {
+	let url = base + "register";
+	let data = {
+		first_name: firnst_name,
+		last_name: last_name,
+		password: password,
+	};
+	return api.post(url, data).then((response) => {
+		let user = response.data;
+		console.log("Received user : " + JSON.stringify(user));
+		setToken(user.sessionToken);
+		delete user.sessionToken;
+		return user;
+	});
+}
+
 function sendHttpRequest(method, url, body) {
 	const xhr = new XMLHttpRequest();
 	xhr.open(method, url, false);

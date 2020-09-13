@@ -1,6 +1,6 @@
 import React from "react";
 import clsx from "clsx";
-import { Redirect } from "react-router-dom";
+import { Redirect, Link } from "react-router-dom";
 import {
 	AppBar,
 	Toolbar,
@@ -17,7 +17,6 @@ import MenuIcon from "@material-ui/icons/Menu";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import { logout, isLoggedIn } from "../../WebFetcher.js";
 import UploadPhoto from "../UploadPhoto.jsx";
-import { disconnect } from "mongoose";
 
 class TopBar extends React.Component {
 	constructor(props) {
@@ -123,6 +122,20 @@ class TopBar extends React.Component {
 	getLogoutButton() {
 		const { classes } = this.props;
 		if (!isLoggedIn()) {
+			console.log(`current path: ${window.location.hash}`);
+			if (window.location.hash.includes("login")) {
+				return (
+					<Link to="/register">
+						<Button
+							className={classes.logout}
+							color="secondary"
+							variant="outlined"
+						>
+							Register
+						</Button>
+					</Link>
+				);
+			}
 			return (
 				<Button
 					className={classes.logout}
