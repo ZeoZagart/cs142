@@ -1,3 +1,11 @@
+To Run on your Mac :=> 
+	install node, mongodb and redis on your system. Start redis and mongodb.
+	"npm run install" in project directory to install node_modules.
+	"node webServer.js", 
+	goto http://localhost:3000/
+
+Register/Login, and enjoy
+
 Comment section : 
 The comment section is real-time chat system. Clicking on comments take to commentors page.
 ![alt text](https://github.com/ZeoZagart/cs142/blob/master/project7/Screenshot%202020-10-25%20at%205.29.27%20PM.png)
