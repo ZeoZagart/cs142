@@ -8,7 +8,7 @@ To Run on your Mac :=>
 	
 	goto http://localhost:3000/
 
-Register/Login, and enjoy
+Register/Login, and start using.
 
 Comment section : 
 The comment section is real-time chat system. Clicking on comments take to commentors page.
